@@ -1,0 +1,253 @@
+/* DEFENCE PATH - MILITARY COMMAND CENTER THEME
+   Brand Palette:
+   - Dark Military Green: #0B1D13, #132E1E, #1A3E2A
+   - Deep Black: #060907, #0B0F0C
+   - Charcoal Grey: #161D19, #232C27
+   - Tactical Gold: #D4AF37, #F2C94C
+   - Stealth Text: #E4ECE7, #FFFFFF, Muted: #8FA498
+*/
+
+@import url('https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-primary: #070B08;
+  --bg-secondary: #0E1712;
+  --bg-card: #132019;
+  --bg-card-hover: #192B22;
+  --military-green: #1F3F2D;
+  --military-green-light: #2A543D;
+  --military-gold: #D4AF37;
+  --military-gold-hover: #E5C158;
+  --military-gold-glow: rgba(212, 175, 55, 0.25);
+  --border-color: #24382D;
+  --border-gold: rgba(212, 175, 55, 0.4);
+  --text-primary: #F0F5F2;
+  --text-secondary: #A0B3A8;
+  --text-muted: #6C8276;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, .military-font {
+  font-family: 'Chakra Petch', 'Inter', sans-serif;
+  letter-spacing: 0.5px;
+}
+
+/* Background tactical grid */
+.tactical-grid-bg {
+  background-image: 
+    linear-gradient(rgba(19, 32, 25, 0.7) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(19, 32, 25, 0.7) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Hero Overlay */
+.hero-banner {
+  position: relative;
+  background: linear-gradient(180deg, rgba(7, 11, 8, 0.85) 0%, rgba(11, 29, 19, 0.95) 100%),
+              url('https://images.unsplash.com/photo-1544717305-2782549b5136?auto=format&fit=crop&w=1920&q=80') center/cover no-repeat;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.hero-overlay {
+  background: radial-gradient(circle at center, rgba(212, 175, 55, 0.08) 0%, rgba(7, 11, 8, 0.95) 80%);
+}
+
+/* Gold Glowing Badges */
+.badge-gold {
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--military-gold);
+  border: 1px solid var(--border-gold);
+  font-weight: 600;
+  font-size: 0.75rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.badge-verified {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34D399;
+  border: 1px solid rgba(16, 185, 129, 0.5);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Military Buttons */
+.btn-military-gold {
+  background: linear-gradient(135deg, #D4AF37 0%, #B89228 100%);
+  color: #0B0F0C;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  transition: all 0.25s ease;
+  border: 1px solid #FFE28A;
+  box-shadow: 0 4px 14px rgba(212, 175, 55, 0.3);
+}
+
+.btn-military-gold:hover {
+  background: linear-gradient(135deg, #E5C158 0%, #D4AF37 100%);
+  box-shadow: 0 6px 20px rgba(212, 175, 55, 0.45);
+  transform: translateY(-2px);
+  color: #000;
+}
+
+.btn-military-outline {
+  background: rgba(19, 32, 25, 0.8);
+  color: #E2ECE5;
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-military-outline:hover {
+  background: var(--military-green);
+  border-color: var(--military-gold);
+  color: var(--military-gold);
+}
+
+/* Card Styling */
+.military-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.military-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--military-gold);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5), 0 0 12px var(--military-gold-glow);
+  transform: translateY(-3px);
+}
+
+.military-card-hud::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 12px;
+  height: 12px;
+  border-top: 2px solid var(--military-gold);
+  border-left: 2px solid var(--military-gold);
+}
+
+.military-card-hud::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 12px;
+  height: 12px;
+  border-bottom: 2px solid var(--military-gold);
+  border-right: 2px solid var(--military-gold);
+}
+
+/* Question Palette in CBT Exam Engine */
+.palette-btn {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.palette-btn:hover {
+  transform: scale(1.1);
+}
+
+.palette-not-visited {
+  background-color: #374151;
+  color: #D1D5DB;
+  border: 1px solid #4B5563;
+}
+
+.palette-not-answered {
+  background-color: #DC2626;
+  color: #FFFFFF;
+  border: 1px solid #EF4444;
+}
+
+.palette-answered {
+  background-color: #16A34A;
+  color: #FFFFFF;
+  border: 1px solid #22C55E;
+}
+
+.palette-marked {
+  background-color: #7C3AED;
+  color: #FFFFFF;
+  border: 1px solid #8B5CF6;
+}
+
+.palette-marked-answered {
+  background-color: #7C3AED;
+  color: #FFFFFF;
+  border: 2px solid #22C55E;
+  position: relative;
+}
+
+.palette-marked-answered::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 6px;
+  height: 6px;
+  background-color: #22C55E;
+  border-radius: 50%;
+}
+
+.palette-active {
+  box-shadow: 0 0 0 3px #F2C94C !important;
+}
+
+/* RTL Urdu Layout adjustments */
+.rtl-layout {
+  direction: rtl;
+  text-align: right;
+}
+
+.rtl-layout .military-card-hud::before {
+  left: auto;
+  right: 0;
+  border-left: none;
+  border-right: 2px solid var(--military-gold);
+}
+
+.rtl-layout .military-card-hud::after {
+  right: auto;
+  left: 0;
+  border-right: none;
+  border-left: 2px solid var(--military-gold);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--military-green);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--military-gold);
+}
