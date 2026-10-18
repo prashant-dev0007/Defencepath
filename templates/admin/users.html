@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block title %}User Cadre & Aspirant Management – Admin – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-blue-400 mb-2">
+        <i class="fa-solid fa-users"></i>
+        <span>CADRE ENROLMENT INVENTORY &bull; STUDENT DOSSIERS</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Registered Cadets & Aspirants
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-1">
+        Inspect registered accounts, individual test attempt histories, average accuracy scores, and performance records.
+      </p>
+    </div>
+
+    <div class="flex flex-wrap gap-2 text-xs font-mono">
+      <a href="/admin" class="bg-[#16271D] hover:bg-[#203D2B] text-gray-200 border border-[#2B4E38] px-3 py-1.5 rounded transition-all">
+        <i class="fa-solid fa-arrow-left mr-1"></i> Dashboard
+      </a>
+      <a href="/admin/student-results" class="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/60 px-3 py-1.5 rounded font-bold transition-all flex items-center gap-1 shadow">
+        <i class="fa-solid fa-chart-column"></i> Test Results Table
+      </a>
+    </div>
+  </div>
+
+  <div class="bg-[#0C1610] border border-[#22392A] rounded-xl overflow-hidden shadow-2xl">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs font-mono">
+        <thead class="bg-[#112016] text-amber-400 border-b border-[#1E3626]">
+          <tr>
+            <th class="p-3">Student & ID</th>
+            <th class="p-3">Username & Contact</th>
+            <th class="p-3">Target Goal</th>
+            <th class="p-3">Role</th>
+            <th class="p-3">Tests Attempted</th>
+            <th class="p-3">Avg Accuracy</th>
+            <th class="p-3">Last Active</th>
+            <th class="p-3 text-center">Student Results</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#182C1F]">
+          {% for u in users %}
+            <tr class="hover:bg-[#122218] transition-colors">
+              <td class="p-3">
+                <div class="flex items-center space-x-3">
+                  <img src="{{ u.profile_image or '/static/uploads/developer/prashant_image.jpeg' }}" class="w-9 h-9 rounded-full object-cover border border-amber-400">
+                  <div>
+                    <strong class="text-white block text-sm">{{ u.full_name }}</strong>
+                    <span class="text-amber-400 text-[10px]">#STU-00{{ u.id }}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="p-3">
+                <span class="text-amber-300 font-bold block">@{{ u.username }}</span>
+                <span class="text-gray-400 text-[11px]">{{ u.email }}</span>
+              </td>
+              <td class="p-3 text-gray-300">
+                <span class="bg-[#122218] border border-[#244530] px-2 py-0.5 rounded text-[11px]">
+                  {{ u.target_exam or 'Tri-Services' }}
+                </span>
+              </td>
+              <td class="p-3">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase {% if u.role == 'admin' %}bg-amber-950 text-amber-400 border border-amber-600{% else %}bg-emerald-950 text-emerald-400 border border-emerald-600{% endif %}">
+                  {{ u.role }}
+                </span>
+              </td>
+              <td class="p-3">
+                <span class="text-sm font-bold {% if (u.attempts_count or 0) > 0 %}text-emerald-400{% else %}text-gray-500{% endif %}">
+                  {{ u.attempts_count or 0 }} Tests
+                </span>
+              </td>
+              <td class="p-3">
+                {% if u.avg_accuracy %}
+                  <span class="font-bold {% if u.avg_accuracy >= 70 %}text-emerald-400{% elif u.avg_accuracy >= 50 %}text-amber-300{% else %}text-rose-400{% endif %}">
+                    {{ u.avg_accuracy }}%
+                  </span>
+                {% else %}
+                  <span class="text-gray-500 italic">No tests yet</span>
+                {% endif %}
+              </td>
+              <td class="p-3 text-gray-400 text-[11px]">
+                {{ u.last_attempt_date or u.created_at }}
+              </td>
+              <td class="p-3 text-center">
+                {% if (u.attempts_count or 0) > 0 %}
+                  <a href="/admin/student-results?user_id={{ u.id }}" class="bg-[#172E20] hover:bg-[#21432E] text-emerald-300 border border-[#2B4E38] px-2.5 py-1.5 rounded text-[11px] font-bold inline-flex items-center gap-1 shadow">
+                    <i class="fa-solid fa-chart-line text-[10px]"></i> View History
+                  </a>
+                {% else %}
+                  <span class="text-gray-600 text-[10px]">Pending Test</span>
+                {% endif %}
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+{% endblock %}

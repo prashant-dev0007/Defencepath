@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}System Audit Logs & Security History – Admin – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-clipboard-list"></i>
+        <span>SECURITY, IMMUTABILITY & AUDIT TRAIL</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Administrative Action Audit Logs
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-1">
+        Immutable record of all critical administrative operations, payment verifications, content modifications, and sync events.
+      </p>
+    </div>
+
+    <a href="/admin" class="bg-[#14261B] hover:bg-[#1E3B2A] text-amber-300 border border-[#2B4E38] px-3.5 py-2 rounded text-xs font-mono">
+      &larr; Admin Command Centre
+    </a>
+  </div>
+
+  <!-- Audit Table -->
+  <div class="bg-[#0C1610] border border-[#22392A] rounded-xl overflow-hidden shadow-2xl">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs font-mono">
+        <thead class="bg-[#112016] text-gray-300 border-b border-[#1E3626]">
+          <tr>
+            <th class="p-3">Log ID</th>
+            <th class="p-3">Timestamp</th>
+            <th class="p-3">Administrator</th>
+            <th class="p-3">Action Type</th>
+            <th class="p-3">Target Entity</th>
+            <th class="p-3">Event Details</th>
+            <th class="p-3">IP Address</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#182C1F]">
+          {% if logs %}
+            {% for l in logs %}
+              <tr class="hover:bg-[#122218] transition-colors">
+                <td class="p-3 font-mono text-gray-500">#LOG-{{ l.id }}</td>
+                <td class="p-3 text-gray-300">{{ l.created_at }}</td>
+                <td class="p-3">
+                  <span class="text-white font-bold block">{{ l.admin_username }}</span>
+                  <span class="text-[10px] text-gray-400">ID: #{{ l.admin_id }}</span>
+                </td>
+                <td class="p-3">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase
+                    {% if 'PAYMENT' in l.action %}bg-emerald-950 text-emerald-400 border border-emerald-600
+                    {% elif 'PRICE' in l.action %}bg-amber-950 text-amber-300 border border-amber-600
+                    {% elif 'DELETE' in l.action %}bg-rose-950 text-rose-300 border border-rose-600
+                    {% else %}bg-[#152B1E] text-blue-300 border border-[#23422E]{% endif %}">
+                    {{ l.action }}
+                  </span>
+                </td>
+                <td class="p-3 text-amber-300 font-semibold">
+                  {{ l.target_type }} {% if l.target_id %}(#{{ l.target_id }}){% endif %}
+                </td>
+                <td class="p-3 text-gray-300 max-w-xs truncate" title="{{ l.details }}">
+                  {{ l.details or 'Completed successfully' }}
+                </td>
+                <td class="p-3 text-gray-400 text-[11px] font-mono">{{ l.ip_address or 'Local / System' }}</td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="7" class="p-8 text-center text-gray-500 font-mono text-xs">
+                No administrative audit entries logged yet.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+{% endblock %}

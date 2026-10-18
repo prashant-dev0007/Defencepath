@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Saved Recruitment Notices – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex items-center justify-between">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-bookmark"></i>
+        <span>BOOKMARKED NOTICES</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Saved Recruitment Notices
+      </h1>
+      <p class="text-sm text-gray-400 mt-1">
+        Your bookmarked defence vacancies and application deadlines.
+      </p>
+    </div>
+
+    <a href="/jobs" class="btn-military-gold px-4 py-2 rounded text-xs font-bold font-mono">
+      Browse More Jobs &rarr;
+    </a>
+  </div>
+
+  {% if jobs %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for job in jobs %}
+        <div class="military-card military-card-hud p-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2 py-0.5 rounded text-xs font-mono font-bold uppercase bg-emerald-950 text-emerald-400 border border-emerald-600">
+                {{ job.status }}
+              </span>
+              <span class="text-xs font-mono text-gray-400">Deadline: {{ job.closing_date }}</span>
+            </div>
+
+            <h3 class="text-lg font-bold text-white mb-2 leading-snug">
+              {{ job.title }}
+            </h3>
+
+            <p class="text-xs text-amber-400 font-mono mb-4">{{ job.organization }} &bull; {{ job.qualification }}</p>
+          </div>
+
+          <div class="pt-4 border-t border-[#1F3325] flex items-center justify-between">
+            <a href="{{ job.application_url }}" target="_blank" rel="noopener noreferrer" class="btn-military-gold py-1.5 px-3 rounded text-xs font-bold font-mono">
+              Apply Online &rarr;
+            </a>
+            <form action="/unsave-job/{{ job.id }}" method="POST">
+              <button type="submit" class="text-xs text-rose-400 hover:text-rose-300 font-mono">
+                <i class="fa-solid fa-trash-can"></i> Remove
+              </button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="bg-[#0C1610] border border-[#203627] p-12 text-center rounded-xl">
+      <i class="fa-regular fa-bookmark text-4xl text-gray-600 mb-3"></i>
+      <h3 class="text-lg font-bold text-white mb-1">No Saved Notices</h3>
+      <p class="text-xs text-gray-400 mb-4">Click "Save to Dossier" on any recruitment notification in Latest Defence Jobs.</p>
+      <a href="/jobs" class="btn-military-gold px-4 py-2 rounded text-xs font-mono font-bold">Explore Jobs</a>
+    </div>
+  {% endif %}
+
+</section>
+{% endblock %}

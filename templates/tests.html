@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Online Mock Tests Catalog – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <!-- Header Banner -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325]">
+    <div class="flex items-center space-x-2 text-xs font-mono text-emerald-400 mb-2">
+      <i class="fa-solid fa-stopwatch text-emerald-400"></i>
+      <span>FULL SIMULATION TESTING SUITE &bull; COMPUTER BASED TEST (CBT)</span>
+    </div>
+    <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+      Online Defence Mock Tests & Speed Drills
+    </h1>
+    <p class="text-sm text-gray-400 mt-1 max-w-3xl">
+      Exam-standard mock testing engine designed to build speed, eliminate negative marking errors, and condition candidates for high-pressure CBT examination environments.
+    </p>
+
+    <!-- Account Free Attempt / Entitlement Status Pill -->
+    <div class="mt-4 flex flex-wrap items-center gap-3">
+      {% if session.get('user_id') %}
+        {% if free_attempt_available %}
+          <div class="bg-emerald-950/60 border border-emerald-500/50 px-3.5 py-1.5 rounded-lg text-xs font-mono text-emerald-300 flex items-center gap-2">
+            <i class="fa-solid fa-gift text-emerald-400"></i>
+            <span>Account Benefit: <strong class="text-white">1 FREE Mock Test Attempt Available</strong></span>
+          </div>
+        {% else %}
+          <div class="bg-amber-950/40 border border-amber-500/40 px-3.5 py-1.5 rounded-lg text-xs font-mono text-amber-300 flex items-center gap-2">
+            <i class="fa-solid fa-check-circle text-amber-400"></i>
+            <span>Free Attempt Consumed &bull; Subsequent attempts: <strong class="text-emerald-400">₹{{ mock_test_price }}</strong> via instant UPI QR</span>
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="bg-[#121F16] border border-[#233F2B] px-3.5 py-1.5 rounded-lg text-xs font-mono text-gray-300 flex items-center gap-2">
+          <i class="fa-solid fa-user-plus text-amber-400"></i>
+          <span>Every registered account receives <strong class="text-amber-300">1 Free Eligible Mock Test Attempt</strong>. <a href="/login" class="text-emerald-400 underline font-bold ml-1">Sign In to Claim &rarr;</a></span>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Tests Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for test in mock_tests %}
+      {% set is_unlocked = (test.id in unlocked_paper_ids) %}
+      {% set is_pending = (test.id in pending_paper_ids) %}
+
+      <div class="military-card military-card-hud p-6 flex flex-col justify-between">
+        <div>
+          <!-- Header Badges -->
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold uppercase bg-emerald-950 text-emerald-400 border border-emerald-600">
+              MOCK TEST • {{ test.exam_code }}
+            </span>
+            <span class="text-xs font-mono text-gray-300">
+              <i class="fa-solid fa-hourglass-half text-amber-400 mr-1"></i> {{ test.duration_minutes }} Mins
+            </span>
+          </div>
+
+          <h3 class="text-lg font-bold text-white mb-2 leading-snug">
+            {{ test.title }}
+          </h3>
+
+          <div class="text-xs text-gray-400 space-y-1.5 font-mono mb-4 bg-[#0F1B14] p-3 rounded border border-[#1E3325]">
+            <p>• Focus Domain: <strong class="text-gray-200">{{ test.subject }}</strong></p>
+            <p>• Total Questions: <strong class="text-gray-200">{{ test.total_questions }} Questions</strong></p>
+            <p>• Maximum Marks: <strong class="text-amber-400">{{ test.max_marks }} Marks</strong></p>
+            <p>• Negative Penalties: <strong class="text-rose-400">-{{ test.negative_marks }} per wrong</strong></p>
+            <p>• Difficulty Rating: <span class="text-amber-300">{{ test.difficulty }}</span></p>
+          </div>
+
+          <!-- Access Entitlement Status Indicator -->
+          <div class="mb-4 text-xs font-mono">
+            {% if is_unlocked %}
+              <span class="text-emerald-400 bg-emerald-950/70 border border-emerald-600 px-2.5 py-1 rounded inline-flex items-center gap-1.5 font-bold">
+                <i class="fa-solid fa-unlock-keyhole"></i> Purchased & Unlocked
+              </span>
+            {% elif is_pending %}
+              <span class="text-amber-300 bg-amber-950/70 border border-amber-600 px-2.5 py-1 rounded inline-flex items-center gap-1.5 font-bold animate-pulse">
+                <i class="fa-solid fa-hourglass-half"></i> Payment Pending Verification
+              </span>
+            {% elif free_attempt_available %}
+              <span class="text-emerald-300 bg-emerald-950/40 border border-emerald-700/60 px-2.5 py-1 rounded inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-circle-check text-emerald-400"></i> Free Attempt Available
+              </span>
+            {% else %}
+              <span class="text-gray-300 bg-[#122017] border border-[#233A2B] px-2.5 py-1 rounded inline-flex items-center gap-1.5">
+                <i class="fa-solid fa-lock text-amber-400"></i> Paid Test: <strong class="text-amber-300">₹{{ mock_test_price }}</strong>
+              </span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="pt-4 border-t border-[#1F3325] flex items-center gap-2">
+          {% if is_unlocked or free_attempt_available %}
+            <a href="/start-test/{{ test.id }}" class="flex-1 btn-military-gold py-2.5 rounded text-center text-xs font-bold font-mono flex items-center justify-center gap-2 shadow">
+              <i class="fa-solid fa-play"></i> Start Timed CBT Exam
+            </a>
+          {% elif is_pending %}
+            <a href="/test-payment/{{ test.id }}" class="flex-1 bg-amber-950 hover:bg-amber-900 text-amber-300 border border-amber-600 py-2.5 rounded text-center text-xs font-bold font-mono flex items-center justify-center gap-2">
+              <i class="fa-solid fa-hourglass-half"></i> Check Payment Status
+            </a>
+          {% elif not session.get('user_id') %}
+            <a href="/login?next=/start-test/{{ test.id }}" class="flex-1 btn-military-gold py-2.5 rounded text-center text-xs font-bold font-mono flex items-center justify-center gap-2 shadow">
+              <i class="fa-solid fa-right-to-bracket"></i> Login for Free Attempt
+            </a>
+          {% else %}
+            <a href="/test-payment/{{ test.id }}" class="flex-1 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black py-2.5 rounded text-center text-xs font-bold font-mono flex items-center justify-center gap-2 shadow-lg">
+              <i class="fa-solid fa-qrcode"></i> Unlock Attempt (₹{{ mock_test_price }})
+            </a>
+          {% endif %}
+
+          <a href="/download-paper-pdf/{{ test.id }}" class="bg-[#172C1E] hover:bg-[#203D2B] text-gray-200 border border-[#2B4B36] py-2.5 px-3 rounded text-center text-xs font-mono" title="Download Mock Paper PDF">
+            <i class="fa-solid fa-file-pdf text-rose-400"></i>
+          </a>
+        </div>
+
+      </div>
+    {% endfor %}
+  </div>
+
+</section>
+{% endblock %}

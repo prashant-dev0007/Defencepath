@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}{{ paper.title }} – Paper Study View – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+  
+  <div class="mb-6 pb-4 border-b border-[#1E3325] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold uppercase bg-amber-950 text-amber-400 border border-amber-600">
+        {{ paper.paper_type }} {{ paper.year }} • STUDY DOSSIER
+      </span>
+      <h1 class="text-2xl font-bold font-['Chakra_Petch'] text-white mt-1">
+        {{ paper.title }}
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-0.5">
+        {{ paper.subject }} | {{ paper.total_questions }} Questions | Max Marks: {{ paper.max_marks }} | Negative: -{{ paper.negative_marks }}
+      </p>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <a href="/start-test/{{ paper.id }}" class="btn-military-gold px-4 py-2 rounded text-xs font-bold font-mono">
+        <i class="fa-solid fa-play"></i> Attempt as CBT Test
+      </a>
+      <a href="/download-paper-pdf/{{ paper.id }}" class="bg-[#16291C] hover:bg-[#203D2B] text-gray-200 border border-[#2B4B36] px-3 py-2 rounded text-xs font-mono">
+        <i class="fa-solid fa-file-pdf text-rose-400"></i> PDF
+      </a>
+    </div>
+  </div>
+
+  <!-- Questions List with Step-by-Step Solutions -->
+  <div class="space-y-6">
+    {% for q in questions %}
+      <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-3 border-b border-[#1A2C20] pb-2">
+          <span class="text-xs font-mono font-bold text-amber-400">
+            QUESTION {{ loop.index }} &bull; [{{ q.subject }} &raquo; {{ q.topic }}]
+          </span>
+          <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-[#16271D] text-gray-300 border border-[#23422E]">
+            Difficulty: {{ q.difficulty }}
+          </span>
+        </div>
+
+        <!-- Question English & Hindi -->
+        <div class="mb-4 text-sm text-gray-100 font-medium leading-relaxed">
+          <p>{{ q.question_text_en }}</p>
+          {% if q.question_text_hi %}
+            <p class="text-gray-300 mt-2 font-normal">{{ q.question_text_hi }}</p>
+          {% endif %}
+        </div>
+
+        <!-- 4 Options Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5">
+          <div class="p-3 rounded-lg border text-xs {% if q.correct_option == 'A' %}bg-emerald-950/70 border-emerald-500 text-white font-bold{% else %}bg-[#101C14] border-[#1F3325] text-gray-300{% endif %}">
+            <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-gray-800 text-amber-400 font-bold mr-2">A</span>
+            {{ q.option_a_en }}
+          </div>
+          <div class="p-3 rounded-lg border text-xs {% if q.correct_option == 'B' %}bg-emerald-950/70 border-emerald-500 text-white font-bold{% else %}bg-[#101C14] border-[#1F3325] text-gray-300{% endif %}">
+            <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-gray-800 text-amber-400 font-bold mr-2">B</span>
+            {{ q.option_b_en }}
+          </div>
+          <div class="p-3 rounded-lg border text-xs {% if q.correct_option == 'C' %}bg-emerald-950/70 border-emerald-500 text-white font-bold{% else %}bg-[#101C14] border-[#1F3325] text-gray-300{% endif %}">
+            <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-gray-800 text-amber-400 font-bold mr-2">C</span>
+            {{ q.option_c_en }}
+          </div>
+          <div class="p-3 rounded-lg border text-xs {% if q.correct_option == 'D' %}bg-emerald-950/70 border-emerald-500 text-white font-bold{% else %}bg-[#101C14] border-[#1F3325] text-gray-300{% endif %}">
+            <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-gray-800 text-amber-400 font-bold mr-2">D</span>
+            {{ q.option_d_en }}
+          </div>
+        </div>
+
+        <!-- Detailed Explanation Box -->
+        <div class="bg-[#09120D] border-l-4 border-l-amber-400 p-4 rounded-r-lg text-xs leading-relaxed">
+          <div class="flex items-center space-x-2 text-amber-400 font-bold font-mono mb-2">
+            <i class="fa-solid fa-lightbulb"></i>
+            <span>CORRECT OPTION: ({{ q.correct_option }}) &bull; STEP-BY-STEP EXPLANATION</span>
+          </div>
+          <div class="text-gray-300 whitespace-pre-line font-mono text-[11.5px] leading-relaxed">
+{{ q.explanation_en }}
+          </div>
+          {% if q.explanation_hi %}
+            <div class="border-t border-[#1C2C20] my-2 pt-2 text-gray-300 font-sans text-xs">
+              <strong class="text-amber-300 block mb-1">हिंदी व्याख्या:</strong>
+              {{ q.explanation_hi }}
+            </div>
+          {% endif %}
+        </div>
+
+      </div>
+    {% endfor %}
+  </div>
+
+</section>
+{% endblock %}

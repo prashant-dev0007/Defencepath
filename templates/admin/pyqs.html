@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}PYQ & Question Bank Manager – Admin – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-book"></i>
+        <span>TEST QUESTION INVENTORY</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        PYQ & Examination Papers Manager
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-1">
+        Configure question papers, add questions with step-by-step mathematical explanations, and set marking rules.
+      </p>
+    </div>
+
+    <button onclick="openAddQuestionModal()" class="btn-military-gold px-5 py-2.5 rounded-lg text-xs font-bold font-mono flex items-center gap-2">
+      <i class="fa-solid fa-plus"></i> Add Question to Bank
+    </button>
+  </div>
+
+  <!-- Papers List -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+    {% for p in papers %}
+      <div class="military-card p-5 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase bg-amber-950 text-amber-300 border border-amber-600">
+              {{ p.paper_type }} • {{ p.year or 'General' }}
+            </span>
+            <span class="text-xs font-mono text-gray-400">{{ p.duration_minutes }} Mins</span>
+          </div>
+          <h3 class="text-base font-bold text-white mb-1">{{ p.title }}</h3>
+          <p class="text-xs text-emerald-400 font-mono mb-3">Exam: {{ p.exam_code }} &bull; Subject: {{ p.subject }}</p>
+          <div class="text-[11px] font-mono text-gray-400 space-y-1 bg-[#101D14] p-2.5 rounded border border-[#1E3425]">
+            <p>• Questions: {{ p.total_questions }} Qs</p>
+            <p>• Marking: +{{ p.marks_per_correct }} / -{{ p.negative_marks }}</p>
+          </div>
+        </div>
+
+        <div class="pt-3 border-t border-[#1F3325] mt-4 flex items-center justify-between text-xs font-mono">
+          <a href="/start-test/{{ p.id }}" target="_blank" class="text-amber-400 hover:underline">Test CBT &rarr;</a>
+          <a href="/download-paper-pdf/{{ p.id }}" class="text-gray-300 hover:text-white"><i class="fa-solid fa-file-pdf text-rose-400"></i> PDF</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Add Question Modal -->
+  <div id="add-q-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0C1610] border border-[#233C2B] rounded-xl max-w-2xl w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-[#1E3325] mb-4">
+        <h3 class="text-base font-bold font-['Chakra_Petch'] text-white">Add New Question with Detailed Explanation</h3>
+        <button onclick="closeAddQuestionModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form method="POST" action="/admin/questions/add" class="space-y-4 text-xs font-mono">
+        <div class="grid grid-cols-3 gap-3">
+          <div>
+            <label class="block text-gray-300 mb-1">Target Paper</label>
+            <select name="paper_id" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+              {% for p in papers %}
+                <option value="{{ p.id }}">{{ p.title }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Subject</label>
+            <input type="text" name="subject" required placeholder="e.g. Mathematics" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Topic / Chapter</label>
+            <input type="text" name="topic" required placeholder="e.g. Percentage" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Question Text (English) <span class="text-rose-400">*</span></label>
+          <textarea name="question_text_en" rows="2" required placeholder="Question text in English..." class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white"></textarea>
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Question Text (Hindi - Optional)</label>
+          <textarea name="question_text_hi" rows="2" placeholder="हिंदी में प्रश्न..." class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white"></textarea>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 mb-1">Option A</label>
+            <input type="text" name="option_a_en" required placeholder="Option A text" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Option B</label>
+            <input type="text" name="option_b_en" required placeholder="Option B text" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 mb-1">Option C</label>
+            <input type="text" name="option_c_en" required placeholder="Option C text" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Option D</label>
+            <input type="text" name="option_d_en" required placeholder="Option D text" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 mb-1">Correct Option <span class="text-rose-400">*</span></label>
+            <select name="correct_option" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white font-bold text-amber-400">
+              <option value="A">Option A</option>
+              <option value="B">Option B</option>
+              <option value="C">Option C</option>
+              <option value="D">Option D</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Difficulty</label>
+            <select name="difficulty" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+              <option value="Easy">Easy</option>
+              <option value="Moderate" selected>Moderate</option>
+              <option value="Hard">Hard</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Step-by-Step Explanation & Formula Derivation <span class="text-rose-400">*</span></label>
+          <textarea name="explanation_en" rows="3" required placeholder="Explain why the correct answer is right and incorrect choices are wrong..." class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white"></textarea>
+        </div>
+
+        <div class="flex items-center space-x-3 pt-3 border-t border-[#1E3325]">
+          <button type="button" onclick="closeAddQuestionModal()" class="flex-1 bg-[#16271D] text-gray-300 py-2 rounded">Cancel</button>
+          <button type="submit" class="flex-1 btn-military-gold py-2 rounded font-bold">Save Question</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function openAddQuestionModal() {
+    document.getElementById('add-q-modal').classList.remove('hidden');
+  }
+  function closeAddQuestionModal() {
+    document.getElementById('add-q-modal').classList.add('hidden');
+  }
+</script>
+{% endblock %}

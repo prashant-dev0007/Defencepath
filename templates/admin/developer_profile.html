@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Developer Profile – Admin Command – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+  
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex items-center justify-between">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-user-pen"></i>
+        <span>ADMINISTRATOR IDENTITY MANAGEMENT</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Edit Project Developer Profile
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-1">
+        Update Er. Prashant Mishra's official credentials, biography, contact hotline, and profile photograph.
+      </p>
+    </div>
+
+    <a href="/developer-profile" target="_blank" class="bg-[#15271C] hover:bg-[#1E3B2A] text-amber-300 border border-[#2B4E38] px-3.5 py-2 rounded text-xs font-mono">
+      <i class="fa-solid fa-eye mr-1"></i> Preview Live Profile &rarr;
+    </a>
+  </div>
+
+  <div class="bg-[#0C1610] border border-amber-500/40 rounded-xl p-6 sm:p-8 shadow-2xl">
+    <form method="POST" action="/admin/developer-profile/update" enctype="multipart/form-data" class="space-y-6 text-xs font-mono">
+      
+      <!-- Photo Preview & Upload -->
+      <div class="flex flex-col sm:flex-row items-center gap-6 pb-6 border-b border-[#1E3325]">
+        <div class="relative">
+          <img id="dev-photo-preview" src="{{ dev.profile_image or '/static/uploads/developer/prashant_image.jpeg' }}" alt="Developer" class="w-28 h-36 object-cover rounded-xl border-2 border-amber-400 shadow-xl">
+        </div>
+
+        <div class="space-y-2 text-center sm:text-left flex-1">
+          <h3 class="text-sm font-bold text-white uppercase tracking-wider">Replace Profile Photograph</h3>
+          <p class="text-gray-400 text-[11px] font-sans">
+            Current Image: <code class="text-emerald-400">{{ dev.profile_image }}</code>
+          </p>
+          <div class="mt-2">
+            <input type="file" name="profile_image_file" id="profile-image-file" accept="image/png, image/jpeg, image/jpg" class="text-xs text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-mono file:bg-amber-400 file:text-black hover:file:bg-amber-300 cursor-pointer">
+          </div>
+          <p class="text-[10px] text-gray-500">Supported formats: JPG, JPEG, PNG. Max file size: 5MB.</p>
+        </div>
+      </div>
+
+      <!-- Developer Credentials -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-300 mb-1">Developer Legal Name <span class="text-rose-400">*</span></label>
+          <input type="text" name="name" value="{{ dev.name }}" required class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Official Professional Title <span class="text-rose-400">*</span></label>
+          <input type="text" name="title" value="{{ dev.title }}" required class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white focus:outline-none focus:border-amber-400">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-300 mb-1">Contact Phone Hotline <span class="text-rose-400">*</span></label>
+          <input type="text" name="contact_number" value="{{ dev.contact_number }}" required class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Verified Email Address (Leave blank if not yet configured)</label>
+          <input type="email" name="email" value="{{ dev.email or '' }}" placeholder="If left blank, will display 'email available soon'" class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white focus:outline-none focus:border-amber-400">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-300 mb-1">Academic Qualification</label>
+          <input type="text" name="qualification" value="{{ dev.qualification or '' }}" placeholder="e.g. B.Tech Computer Science & Engineering" class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Portfolio / Project URL</label>
+          <input type="url" name="portfolio_url" value="{{ dev.portfolio_url or '' }}" placeholder="https://..." class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white focus:outline-none focus:border-amber-400">
+        </div>
+      </div>
+
+      <!-- Biography -->
+      <div>
+        <label class="block text-gray-300 mb-1">Developer Biography & Vision <span class="text-rose-400">*</span></label>
+        <textarea name="bio" rows="5" required class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white font-sans text-xs focus:outline-none focus:border-amber-400 leading-relaxed">{{ dev.bio }}</textarea>
+      </div>
+
+      <div class="pt-4 border-t border-[#1E3325] flex justify-end">
+        <button type="submit" class="btn-military-gold px-8 py-3 rounded-lg text-xs font-bold font-mono tracking-wider shadow-lg flex items-center gap-2">
+          <i class="fa-solid fa-floppy-disk"></i> Save & Apply Changes to Live Site
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Instant photo preview
+  const fileInput = document.getElementById('profile-image-file');
+  const previewImg = document.getElementById('dev-photo-preview');
+  if (fileInput && previewImg) {
+    fileInput.addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          previewImg.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+</script>
+{% endblock %}

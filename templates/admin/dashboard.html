@@ -1,0 +1,237 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Command Centre – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <!-- Header Banner -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>HEADQUARTERS DISPATCH CONSOLE &bull; ROLE: ADMINISTRATOR</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Admin Command Centre
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-1">
+        Administrator & System Lead: <strong class="text-amber-400">Er. Prashant Mishra</strong> &bull; Authenticated Role: System Administrator
+      </p>
+    </div>
+
+    <!-- Quick Navigation to Admin Modules -->
+    <div class="flex flex-wrap gap-2 text-xs font-mono">
+      <a href="/admin/payments" class="bg-amber-950/90 hover:bg-amber-900 text-amber-300 border border-amber-500/70 px-3 py-1.5 rounded font-bold transition-all flex items-center gap-1 shadow">
+        <i class="fa-solid fa-receipt"></i> Payments Desk {% if count_pending_payments %}<span class="bg-rose-600 text-white text-[9px] px-1.5 py-0.2 rounded-full font-mono">{{ count_pending_payments }}</span>{% endif %}
+      </a>
+      <a href="/admin/student-results" class="bg-emerald-950/80 hover:bg-emerald-900 text-emerald-300 border border-emerald-500/60 px-3 py-1.5 rounded font-bold transition-all flex items-center gap-1 shadow">
+        <i class="fa-solid fa-chart-column"></i> Student Results
+      </a>
+      <a href="/admin/recruitments" class="bg-[#16271D] hover:bg-[#203D2B] text-emerald-300 border border-[#2B4E38] px-3 py-1.5 rounded transition-all">
+        <i class="fa-solid fa-briefcase mr-1"></i> Jobs Manager
+      </a>
+      <a href="/admin/exams" class="bg-[#16271D] hover:bg-[#203D2B] text-amber-300 border border-[#2B4E38] px-3 py-1.5 rounded transition-all">
+        <i class="fa-solid fa-graduation-cap mr-1"></i> Exams Master
+      </a>
+      <a href="/admin/syllabus" class="bg-[#16271D] hover:bg-[#203D2B] text-emerald-300 border border-[#2B4E38] px-3 py-1.5 rounded transition-all">
+        <i class="fa-solid fa-list-check mr-1"></i> Syllabus
+      </a>
+      <a href="/admin/pyqs" class="bg-[#16271D] hover:bg-[#203D2B] text-blue-300 border border-[#2B4E38] px-3 py-1.5 rounded transition-all">
+        <i class="fa-solid fa-book mr-1"></i> Papers & Qs
+      </a>
+      <a href="/admin/questions/import" class="bg-[#16271D] hover:bg-[#203D2B] text-purple-300 border border-[#2B4E38] px-3 py-1.5 rounded transition-all">
+        <i class="fa-solid fa-file-import mr-1"></i> Import Qs
+      </a>
+      <a href="/admin/settings" class="bg-[#16271D] hover:bg-[#203D2B] text-amber-300 border border-[#2B4E38] px-3 py-1.5 rounded transition-all">
+        <i class="fa-solid fa-sliders mr-1"></i> Settings & QR
+      </a>
+      <a href="/admin/audit-logs" class="bg-[#16271D] hover:bg-[#203D2B] text-gray-300 border border-[#2B4E38] px-3 py-1.5 rounded transition-all">
+        <i class="fa-solid fa-clipboard-list mr-1"></i> Audit Logs
+      </a>
+      <a href="/admin/users" class="bg-[#16271D] hover:bg-[#203D2B] text-blue-300 border border-[#2B4E38] px-3 py-1.5 rounded transition-all">
+        <i class="fa-solid fa-users mr-1"></i> Cadets
+      </a>
+      <a href="/admin/developer-profile" class="bg-amber-950/70 hover:bg-amber-900 text-amber-300 border border-amber-500/50 px-3 py-1.5 rounded font-bold transition-all">
+        <i class="fa-solid fa-user-gear mr-1"></i> Dev Profile
+      </a>
+    </div>
+  </div>
+
+  <!-- Metric Overview Cards (5 Columns) -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3.5 mb-8">
+    <div class="bg-[#0C1610] border border-[#203627] p-4 rounded-xl">
+      <span class="text-xs font-mono text-gray-400 uppercase">Recruitment Notices</span>
+      <p class="text-2xl font-bold font-mono text-emerald-400 mt-1.5">{{ count_jobs }}</p>
+      <span class="text-[10px] text-gray-400 font-mono">Gazette Verified</span>
+    </div>
+
+    <div class="bg-[#0C1610] border border-[#203627] p-4 rounded-xl">
+      <span class="text-xs font-mono text-gray-400 uppercase">Registered Cadets</span>
+      <p class="text-2xl font-bold font-mono text-amber-400 mt-1.5">{{ count_users }}</p>
+      <span class="text-[10px] text-gray-400 font-mono">Active Student Accounts</span>
+    </div>
+
+    <div class="bg-[#0C1610] border border-[#203627] p-4 rounded-xl">
+      <span class="text-xs font-mono text-gray-400 uppercase">Test Papers Live</span>
+      <p class="text-2xl font-bold font-mono text-blue-400 mt-1.5">{{ count_papers }}</p>
+      <span class="text-[10px] text-gray-400 font-mono">PYQ & CBT Mocks</span>
+    </div>
+
+    <div class="bg-[#0C1610] border border-emerald-500/40 p-4 rounded-xl bg-emerald-950/20">
+      <span class="text-xs font-mono text-emerald-400 uppercase font-bold">Total CBT Attempts</span>
+      <p class="text-2xl font-bold font-mono text-emerald-300 mt-1.5">{{ count_attempts }}</p>
+      <a href="/admin/student-results" class="text-[10px] text-emerald-400 font-mono hover:underline">View Analytics &rarr;</a>
+    </div>
+
+    <div class="bg-[#0C1610] border border-[#203627] p-4 rounded-xl">
+      <span class="text-xs font-mono text-gray-400 uppercase">Messages Inbox</span>
+      <p class="text-2xl font-bold font-mono text-purple-400 mt-1.5">{{ count_messages }}</p>
+      <span class="text-[10px] text-gray-400 font-mono">Direct Messages</span>
+    </div>
+  </div>
+
+
+  <!-- Main Content Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Column: Recent Student Test Attempts & Communications (7 cols) -->
+    <div class="lg:col-span-7 space-y-6">
+      
+      <!-- Recent Student Results Activity Box -->
+      <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-5 shadow-xl">
+        <div class="flex items-center justify-between pb-3 mb-4 border-b border-[#1C3224]">
+          <h3 class="text-sm font-bold font-mono uppercase tracking-wider text-emerald-400 flex items-center gap-2">
+            <i class="fa-solid fa-stopwatch"></i> Recent Student Examination Submissions
+          </h3>
+          <a href="/admin/student-results" class="text-xs font-mono text-amber-400 hover:underline">
+            View All Records &rarr;
+          </a>
+        </div>
+
+        {% if recent_attempts %}
+          <div class="space-y-2.5 font-mono text-xs">
+            {% for a in recent_attempts %}
+              <div class="bg-[#111F16] border border-[#1E3424] p-3 rounded-lg flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:border-amber-400/40 transition-colors">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <strong class="text-white">{{ a.full_name }}</strong>
+                    <span class="text-amber-400 text-[10px]">@{{ a.username }}</span>
+                  </div>
+                  <span class="text-gray-300 text-[11px] block mt-0.5">{{ a.paper_title }}</span>
+                  <span class="text-[10px] text-gray-500">{{ a.attempt_date }}</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="text-right">
+                    <span class="text-sm font-bold {% if a.score >= (a.max_marks * 0.5) %}text-emerald-400{% else %}text-amber-400{% endif %} block">
+                      {{ a.score }} / {{ a.max_marks }} M
+                    </span>
+                    <span class="text-[10px] text-gray-400">{{ a.accuracy_percent }}% Accuracy</span>
+                  </div>
+                  <a href="/test-result/{{ a.id }}" target="_blank" class="bg-[#172E20] hover:bg-[#21432E] text-emerald-300 border border-[#2B4E38] px-2 py-1 rounded text-[10px] font-bold">
+                    Audit
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-xs text-gray-400 font-mono italic">No examination attempts recorded yet.</p>
+        {% endif %}
+      </div>
+
+      <!-- Contact Dispatch Messages Inbox -->
+      <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-5 shadow-xl">
+        <h3 class="text-sm font-bold font-mono uppercase tracking-wider text-amber-400 mb-4 pb-2 border-b border-[#1C3224] flex items-center justify-between">
+          <span>Incoming Candidate Inquiries</span>
+          <span class="text-[10px] text-gray-400">Total: {{ messages|length }} Messages</span>
+        </h3>
+
+        {% if messages %}
+          <div class="space-y-3">
+            {% for m in messages %}
+              <div class="bg-[#111F16] border border-[#1E3424] p-3.5 rounded-lg text-xs font-mono">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-white">{{ m.name }} &bull; <span class="text-amber-300 font-normal">{{ m.email }}</span></span>
+                  <span class="text-[10px] text-gray-400">{{ m.created_at }}</span>
+                </div>
+                <p class="text-emerald-400 font-semibold mb-1">Subject: {{ m.subject }}</p>
+                <p class="text-gray-300 font-sans text-xs bg-[#09110B] p-2.5 rounded border border-[#17271B] leading-relaxed">
+                  {{ m.message }}
+                </p>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-xs text-gray-400 font-mono italic">No incoming transmissions in dispatch inbox.</p>
+        {% endif %}
+      </div>
+
+      <!-- System Announcements Manager -->
+      <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-5 shadow-xl">
+        <h3 class="text-sm font-bold font-mono uppercase tracking-wider text-emerald-400 mb-4 pb-2 border-b border-[#1C3224]">
+          Broadcast System Announcement
+        </h3>
+        <form method="POST" action="/admin/announcements/add" class="space-y-3 text-xs font-mono">
+          <div>
+            <label class="block text-gray-300 mb-1">Announcement Headline</label>
+            <input type="text" name="title" required placeholder="e.g. UPSC NDA (I) 2026 Notification Released" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Category & Details</label>
+            <textarea name="content" rows="2" required placeholder="Full ticker text..." class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400"></textarea>
+          </div>
+          <button type="submit" class="btn-military-gold px-4 py-2 rounded text-xs font-bold font-mono">
+            Broadcast to Live Ticker
+          </button>
+        </form>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Developer Profile Quick Card & Operations (5 cols) -->
+    <div class="lg:col-span-5 space-y-6">
+      
+      <!-- Developer Dossier Snapshot -->
+      <div class="bg-[#0C1610] border border-amber-500/40 rounded-xl p-6 shadow-xl">
+        <div class="flex items-center space-x-4 mb-4 pb-4 border-b border-[#1E3325]">
+          <img src="{{ dev.profile_image or '/static/uploads/developer/prashant_image.jpeg' }}" class="w-16 h-20 object-cover rounded-lg border-2 border-amber-400 shadow">
+          <div>
+            <h4 class="text-base font-bold text-white">{{ dev.name }}</h4>
+            <p class="text-xs text-amber-400 font-mono">{{ dev.title }}</p>
+            <p class="text-xs text-gray-400 font-mono mt-1">Phone: {{ dev.contact_number }}</p>
+          </div>
+        </div>
+
+        <p class="text-xs text-gray-300 mb-4 line-clamp-3">
+          {{ dev.bio }}
+        </p>
+
+        <a href="/admin/developer-profile" class="w-full btn-military-gold py-2 rounded text-center text-xs font-bold font-mono block shadow">
+          <i class="fa-solid fa-pen-to-square mr-1"></i> Edit Developer Profile & Replace Photo
+        </a>
+      </div>
+
+      <!-- Quick Platform Actions -->
+      <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-5 shadow-xl font-mono text-xs space-y-2">
+        <h4 class="text-xs font-bold uppercase text-gray-400 mb-3 pb-2 border-b border-[#1E3325]">Command Shortcuts</h4>
+        <a href="/admin/student-results" class="block bg-[#122017] hover:bg-[#1A2E21] p-2.5 rounded border border-emerald-600/50 text-emerald-300 font-bold">
+          <i class="fa-solid fa-chart-line mr-1 text-emerald-400"></i> Student Test Results & Analytics
+        </a>
+        <a href="/admin/recruitments" class="block bg-[#122017] hover:bg-[#1A2E21] p-2.5 rounded border border-[#243F2D] text-gray-200">
+          <i class="fa-solid fa-briefcase mr-1 text-amber-400"></i> Manage Defence Recruitment Notices
+        </a>
+        <a href="/admin/pyqs" class="block bg-[#122017] hover:bg-[#1A2E21] p-2.5 rounded border border-[#243F2D] text-gray-200">
+          <i class="fa-solid fa-book-open mr-1 text-blue-400"></i> Question Bank & PYQ Repository
+        </a>
+        <a href="/admin/users" class="block bg-[#122017] hover:bg-[#1A2E21] p-2.5 rounded border border-[#243F2D] text-gray-200">
+          <i class="fa-solid fa-users mr-1 text-purple-400"></i> Cadet Enrolment Inventory
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+{% endblock %}

@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Mock Test Access & UPI Payment – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+
+  <!-- Header Banner -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325]">
+    <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+      <i class="fa-solid fa-lock text-amber-400"></i>
+      <span>CBT TEST AUTHORIZATION & PAYMENT DESK</span>
+    </div>
+    <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+      Unlock Examination Attempt
+    </h1>
+    <p class="text-sm text-gray-400 mt-1">
+      Official mock test access fee is nominal (₹{{ price }} per attempt). Scan the administrator-verified UPI QR code below and submit your 12-digit transaction reference.
+    </p>
+  </div>
+
+  {% if existing_pending %}
+    <div class="bg-amber-950/40 border border-amber-500/60 rounded-xl p-5 mb-8 shadow-xl">
+      <div class="flex items-start space-x-3">
+        <i class="fa-solid fa-hourglass-half text-amber-400 text-xl mt-0.5"></i>
+        <div>
+          <h3 class="text-base font-bold text-amber-300 font-mono">Payment Verification in Progress</h3>
+          <p class="text-xs text-gray-300 mt-1 font-mono">
+            Transaction Reference: <strong class="text-white">{{ existing_pending.transaction_ref }}</strong> &bull; Amount: <strong class="text-emerald-400">₹{{ existing_pending.amount }}</strong>
+          </p>
+          <p class="text-xs text-gray-400 mt-1">
+            Submitted at {{ existing_pending.created_at }}. Administrator Er. Prashant Mishra is verifying your payment against bank ledger. Your test will unlock immediately upon verification.
+          </p>
+          <div class="mt-3">
+            <a href="/tests" class="btn-military-gold px-4 py-1.5 rounded text-xs font-mono font-bold inline-block">
+              &larr; Back to Mock Tests
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+    
+    <!-- Left Column: Test Overview Card (5 cols) -->
+    <div class="md:col-span-5 space-y-4">
+      <div class="military-card p-6 border-amber-500/30">
+        <div class="flex items-center justify-between mb-3">
+          <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold uppercase bg-amber-950 text-amber-300 border border-amber-600">
+            {{ paper.paper_type }} • {{ paper.exam_code }}
+          </span>
+          <span class="text-xs font-mono text-gray-300">
+            <i class="fa-solid fa-hourglass-half text-amber-400 mr-1"></i> {{ paper.duration_minutes }} Mins
+          </span>
+        </div>
+
+        <h3 class="text-lg font-bold text-white mb-2 leading-snug">
+          {{ paper.title }}
+        </h3>
+
+        <div class="text-xs text-gray-300 space-y-2 font-mono bg-[#0E1A13] p-3.5 rounded border border-[#1D3425] mb-4">
+          <div class="flex justify-between">
+            <span class="text-gray-400">Subject:</span>
+            <strong class="text-white">{{ paper.subject }}</strong>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-400">Questions:</span>
+            <strong class="text-white">{{ paper.total_questions }} Qs</strong>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-400">Max Marks:</span>
+            <strong class="text-amber-400">{{ paper.max_marks }}</strong>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-400">Marking:</span>
+            <strong class="text-emerald-400">+{{ paper.marks_per_correct }} / -{{ paper.negative_marks }}</strong>
+          </div>
+        </div>
+
+        <div class="border-t border-[#1F3526] pt-4">
+          <span class="text-xs font-mono text-gray-400 block uppercase">Attempt Price</span>
+          <div class="flex items-baseline space-x-2 mt-1">
+            <span class="text-3xl font-extrabold font-mono text-emerald-400">₹{{ price }}</span>
+            <span class="text-xs text-gray-400 font-mono">INR / single attempt</span>
+          </div>
+          <p class="text-[11px] text-gray-400 mt-2 font-sans">
+            ✓ Full CBT simulation &bull; Detailed step-by-step explanations &bull; Weakness diagnostics &bull; Persistent score record
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-[#0C1610] border border-[#1E3424] p-4 rounded-xl text-xs text-gray-300 font-mono space-y-1.5">
+        <p class="text-amber-400 font-bold flex items-center gap-1.5">
+          <i class="fa-solid fa-shield-halved text-[10px]"></i> Transparent Payment Guarantee
+        </p>
+        <p class="text-[11px] text-gray-400 font-sans leading-relaxed">
+          Payments are verified directly by Lead Developer Er. Prashant Mishra. Your purchase is linked permanently to your registered cadet account (<strong class="text-gray-200">{{ session.get('username') }}</strong>).
+        </p>
+      </div>
+    </div>
+
+    <!-- Right Column: Scan & Submit Form (7 cols) -->
+    <div class="md:col-span-7">
+      <div class="bg-[#0C1610] border border-[#233C2B] rounded-xl p-6 shadow-2xl">
+        <h3 class="text-base font-bold text-white font-['Chakra_Petch'] mb-4 flex items-center justify-between pb-3 border-b border-[#1E3526]">
+          <span>STEP 1: Scan UPI QR to Pay ₹{{ price }}</span>
+          <span class="text-xs font-mono text-emerald-400 font-normal">Instant UPI Payment</span>
+        </h3>
+
+        <!-- QR Display -->
+        <div class="flex flex-col sm:flex-row items-center gap-6 mb-6 bg-[#08120B] p-4 rounded-xl border border-[#1A2E20]">
+          <div class="relative bg-white p-2.5 rounded-xl shadow-lg shrink-0">
+            <img src="{{ qr_image }}" alt="UPI QR Code - Er. Prashant Mishra" class="w-44 h-44 sm:w-48 sm:h-48 object-contain rounded-lg">
+            <span class="block text-center text-[9px] font-mono text-gray-800 font-bold mt-1">GPay &bull; PhonePe &bull; Paytm &bull; BHIM</span>
+          </div>
+
+          <div class="space-y-2 text-xs font-mono text-gray-300 flex-1">
+            <p class="text-gray-400 text-[11px]">Payee Official Name:</p>
+            <p class="text-white font-bold text-sm">{{ upi_name }}</p>
+
+            <p class="text-gray-400 text-[11px] mt-2">Official Payee UPI ID:</p>
+            <div class="flex items-center gap-2">
+              <input type="text" readonly id="upi-id-field" value="{{ upi_id }}" class="bg-[#122218] border border-[#23422E] text-amber-300 font-mono text-xs px-2.5 py-1.5 rounded w-full">
+              <button onclick="copyUpiId()" class="bg-[#182C1F] hover:bg-[#203D2B] text-gray-200 border border-[#2B4B36] px-2.5 py-1.5 rounded text-xs shrink-0" title="Copy UPI ID">
+                <i class="fa-regular fa-copy"></i>
+              </button>
+            </div>
+
+            <div class="pt-2">
+              <a href="upi://pay?pa={{ upi_id }}&pn={{ upi_name | urlencode }}&am={{ price }}&cu=INR&tn=DefencePathMockTest" class="inline-block bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-1.5 px-3 rounded text-[11px] font-mono shadow">
+                <i class="fa-solid fa-mobile-screen-button mr-1"></i> Pay via Mobile UPI App
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2: Submission Form -->
+        <h3 class="text-base font-bold text-white font-['Chakra_Petch'] mb-3 pb-2 border-b border-[#1E3526]">
+          STEP 2: Submit 12-Digit Transaction Reference (UTR)
+        </h3>
+
+        <form method="POST" action="/api/payment/submit" enctype="multipart/form-data" class="space-y-4 text-xs font-mono">
+          <input type="hidden" name="paper_id" value="{{ paper.id }}">
+
+          <div>
+            <label class="block text-gray-300 mb-1">
+              12-Digit UPI Ref Number / UTR / Transaction ID <span class="text-rose-400">*</span>
+            </label>
+            <input type="text" name="transaction_ref" required maxlength="40" placeholder="e.g. 428910284712 or UPI/4289..." class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white font-mono text-sm focus:outline-none focus:border-amber-400 tracking-wider">
+            <p class="text-[10px] text-gray-500 mt-1">Locate the 12-digit UTR in your payment details in Google Pay, PhonePe, Paytm, or your bank app.</p>
+          </div>
+
+          <div>
+            <label class="block text-gray-300 mb-1">
+              Payment Screenshot / Proof (Optional, Recommended for Quick Approval)
+            </label>
+            <input type="file" name="proof_image" accept="image/png, image/jpeg, image/jpg" class="text-xs text-gray-300 file:mr-3 file:py-1.5 file:px-3 file:rounded file:border-0 file:text-xs file:font-mono file:bg-[#182C1F] file:text-amber-300 hover:file:bg-[#203D2B] cursor-pointer">
+            <p class="text-[10px] text-gray-500 mt-1">Accepted formats: JPG, PNG, WEBP (Max 5MB)</p>
+          </div>
+
+          <div class="pt-2">
+            <button type="submit" class="w-full btn-military-gold py-3 rounded-lg font-bold font-mono text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl">
+              <i class="fa-solid fa-paper-plane"></i> Submit Payment for Verification
+            </button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<script>
+function copyUpiId() {
+  const field = document.getElementById('upi-id-field');
+  field.select();
+  field.setSelectionRange(0, 99999);
+  navigator.clipboard.writeText(field.value);
+  alert("UPI ID copied to clipboard: " + field.value);
+}
+</script>
+{% endblock %}

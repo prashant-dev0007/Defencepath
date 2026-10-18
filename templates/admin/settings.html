@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+
+{% block title %}Platform Settings & Payment QR CMS – Admin – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+  
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-sliders"></i>
+        <span>SYSTEM ARCHITECTURE & PAYMENT CONFIGURATION</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Platform CMS & Payment Settings
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-1">
+        Configure live mock test pricing, administrator payment QR code, site announcements, and recruitment sync automation.
+      </p>
+    </div>
+
+    <form action="/admin/recruitment/sync-now" method="POST">
+      <button type="submit" class="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-lg text-xs font-mono flex items-center gap-2 shadow">
+        <i class="fa-solid fa-arrows-rotate"></i> Run Auto Recruitment Scan
+      </button>
+    </form>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+    
+    <!-- Left Column: Pricing & UPI QR (7 cols) -->
+    <div class="md:col-span-7 space-y-6">
+      <div class="bg-[#0C1610] border border-amber-500/40 rounded-xl p-6 shadow-2xl">
+        <h3 class="text-base font-bold text-white font-['Chakra_Petch'] mb-4 pb-3 border-b border-[#1E3526] flex items-center gap-2">
+          <i class="fa-solid fa-qrcode text-amber-400"></i> UPI QR & Mock Test Pricing
+        </h3>
+
+        <form method="POST" action="/admin/settings/update-payment" enctype="multipart/form-data" class="space-y-4 text-xs font-mono">
+          
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-gray-300 mb-1">Standard Mock Test Price (₹ INR) <span class="text-rose-400">*</span></label>
+              <input type="number" step="0.5" name="mock_test_price" value="{{ settings.get('mock_test_price', '5') }}" required class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white font-mono text-base font-bold text-emerald-400 focus:outline-none focus:border-amber-400">
+              <span class="text-[10px] text-gray-400">Standard candidate charge per attempt</span>
+            </div>
+            <div>
+              <label class="block text-gray-300 mb-1">Payee Legal Name <span class="text-rose-400">*</span></label>
+              <input type="text" name="upi_name" value="{{ settings.get('upi_name', 'Er. Prashant Mishra') }}" required class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white focus:outline-none focus:border-amber-400">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-gray-300 mb-1">Administrator Official UPI ID <span class="text-rose-400">*</span></label>
+            <input type="text" name="upi_id" value="{{ settings.get('upi_id', 'pm204664-1@okaxis') }}" required class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-amber-300 font-mono text-sm tracking-wider focus:outline-none focus:border-amber-400">
+            <span class="text-[10px] text-gray-400">This UPI ID is copied by students during payment</span>
+          </div>
+
+          <!-- QR Image Preview & Upload -->
+          <div class="bg-[#08120B] p-4 rounded-xl border border-[#1B2F21] flex flex-col sm:flex-row items-center gap-4">
+            <div class="bg-white p-2 rounded-lg shrink-0">
+              <img src="{{ settings.get('upi_qr_image', '/static/uploads/payment/prashant_upi_qr.jpeg') }}" alt="Active QR" class="w-24 h-24 object-contain">
+            </div>
+            <div class="space-y-1.5 flex-1">
+              <span class="text-xs font-bold text-white block">Active Payment QR Code</span>
+              <p class="text-[10px] text-gray-400">Upload replacement QR code (Google Pay, PhonePe, Paytm, or BHIM QR):</p>
+              <input type="file" name="upi_qr_file" accept="image/png, image/jpeg, image/jpg" class="text-xs text-gray-300 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-[11px] file:font-mono file:bg-amber-400 file:text-black cursor-pointer">
+            </div>
+          </div>
+
+          <div class="pt-3 border-t border-[#1E3526] flex justify-end">
+            <button type="submit" class="btn-military-gold px-6 py-2.5 rounded font-bold font-mono text-xs shadow-lg">
+              <i class="fa-solid fa-floppy-disk"></i> Update Payment Configuration
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+      <!-- Broadcast Announcements CMS -->
+      <div class="bg-[#0C1610] border border-[#203627] rounded-xl p-6 shadow-2xl">
+        <h3 class="text-base font-bold text-white font-['Chakra_Petch'] mb-4 pb-3 border-b border-[#1E3526] flex items-center gap-2">
+          <i class="fa-solid fa-bullhorn text-amber-400"></i> Homepage Ticker & Announcement
+        </h3>
+
+        <form method="POST" action="/admin/settings/update-announcement" class="space-y-4 text-xs font-mono">
+          <div>
+            <label class="block text-gray-300 mb-1">Global Broadcast Message</label>
+            <textarea name="site_announcement" rows="3" required class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white font-sans text-xs focus:outline-none focus:border-amber-400">{{ settings.get('site_announcement', 'Welcome to DEFENCE PATH - Official Defence Recruitment, PYQs & CBT Mock Test Portal.') }}</textarea>
+            <span class="text-[10px] text-gray-400">Appears on homepage alert bar for all visiting defence aspirants.</span>
+          </div>
+
+          <div class="flex justify-end">
+            <button type="submit" class="bg-[#182C1F] hover:bg-[#203D2B] text-amber-300 border border-[#2B4B36] px-5 py-2 rounded font-bold font-mono text-xs">
+              Save Broadcast
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Column: Recruitment Automation Status & Recent Logs (5 cols) -->
+    <div class="md:col-span-5 space-y-6">
+      
+      <div class="bg-[#0C1610] border border-[#203627] rounded-xl p-6 shadow-2xl">
+        <h3 class="text-base font-bold text-white font-['Chakra_Petch'] mb-3 pb-2 border-b border-[#1E3526] flex items-center justify-between">
+          <span>Recruitment Sync Engine</span>
+          <span class="text-emerald-400 text-xs font-mono">
+            <i class="fa-solid fa-circle text-[8px] animate-pulse"></i> Operational
+          </span>
+        </h3>
+
+        <p class="text-xs text-gray-400 font-sans mb-4 leading-relaxed">
+          The automatic updater evaluates closing dates against today's calendar and marks overdue notices as <strong class="text-rose-400">Applications Closed</strong> and imminent deadlines as <strong class="text-amber-400">Closing Soon</strong>.
+        </p>
+
+        <form action="/admin/recruitment/sync-now" method="POST" class="mb-4">
+          <button type="submit" class="w-full bg-emerald-800 hover:bg-emerald-700 text-white font-bold py-2.5 rounded font-mono text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow">
+            <i class="fa-solid fa-rotate"></i> Synchronize All Deadlines Now
+          </button>
+        </form>
+
+        <h4 class="text-xs font-bold text-amber-300 font-mono uppercase tracking-wider mb-2">Recent Sync Audit Logs</h4>
+        {% if update_logs %}
+          <div class="space-y-2 text-[11px] font-mono">
+            {% for log in update_logs %}
+              <div class="bg-[#111F16] border border-[#1D3525] p-2.5 rounded">
+                <div class="flex justify-between items-center text-gray-400 mb-1">
+                  <span class="text-white font-bold">{{ log.status }}</span>
+                  <span>{{ log.created_at }}</span>
+                </div>
+                <p class="text-gray-300 text-[10px]">{{ log.details }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-gray-500 font-mono text-xs italic">No sync logs recorded yet.</p>
+        {% endif %}
+      </div>
+
+      <!-- Quick Platform Actions -->
+      <div class="bg-[#0C1610] border border-[#203627] rounded-xl p-6 shadow-2xl text-xs font-mono space-y-3">
+        <h3 class="text-sm font-bold text-white uppercase tracking-wider border-b border-[#1E3526] pb-2">Admin Quick Links</h3>
+        <a href="/admin/exams" class="block bg-[#122218] hover:bg-[#1A3323] p-2.5 rounded border border-[#203828] text-gray-300 hover:text-white">
+          <i class="fa-solid fa-graduation-cap text-amber-400 mr-2"></i> Manage Defence Exams Master &rarr;
+        </a>
+        <a href="/admin/syllabus" class="block bg-[#122218] hover:bg-[#1A3323] p-2.5 rounded border border-[#203828] text-gray-300 hover:text-white">
+          <i class="fa-solid fa-list-check text-emerald-400 mr-2"></i> Manage Structured Exam Syllabus &rarr;
+        </a>
+        <a href="/admin/questions/import" class="block bg-[#122218] hover:bg-[#1A3323] p-2.5 rounded border border-[#203828] text-gray-300 hover:text-white">
+          <i class="fa-solid fa-file-import text-blue-400 mr-2"></i> Bulk Import Questions (JSON/CSV) &rarr;
+        </a>
+        <a href="/admin/audit-logs" class="block bg-[#122218] hover:bg-[#1A3323] p-2.5 rounded border border-[#203828] text-gray-300 hover:text-white">
+          <i class="fa-solid fa-clipboard-list text-purple-400 mr-2"></i> View System Audit Trail &rarr;
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+{% endblock %}

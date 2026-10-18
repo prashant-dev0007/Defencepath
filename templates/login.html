@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block title %}Cadet Authentication & Access Gateway – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-12 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+  
+  <div class="text-center max-w-md mx-auto mb-8">
+    <div class="w-12 h-12 rounded-xl bg-amber-400 mx-auto flex items-center justify-center text-black font-bold text-xl mb-3 shadow-lg shadow-amber-900/30">
+      <i class="fa-solid fa-shield-halved"></i>
+    </div>
+    <h1 class="text-2xl font-bold font-['Chakra_Petch'] text-white">
+      DEFENCE PATH ACCESS GATEWAY
+    </h1>
+    <p class="text-xs text-gray-400 font-mono mt-1">
+      "Your Dream. Your Discipline. Your Uniform."
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    
+    <!-- Login Form Card -->
+    <div class="bg-[#0C1610] border border-[#233C2B] rounded-xl p-6 sm:p-8 shadow-xl">
+      <h2 class="text-lg font-bold font-['Chakra_Petch'] text-white mb-1 flex items-center gap-2">
+        <i class="fa-solid fa-lock text-amber-400"></i> Cadet Login
+      </h2>
+      <p class="text-xs text-gray-400 font-mono mb-5">Sign in to access your test records and weakness analytics</p>
+
+      <form method="POST" action="/login" class="space-y-4 text-xs font-mono">
+        <div>
+          <label class="block text-gray-300 mb-1">Username or Email <span class="text-rose-400">*</span></label>
+          <input type="text" name="username" required placeholder="Enter username or email" class="w-full bg-[#122218] border border-[#264230] rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-gray-300">Password <span class="text-rose-400">*</span></label>
+            <a href="/forgot-password" class="text-[11px] text-amber-400 hover:text-amber-300 transition-colors">Forgot Password?</a>
+          </div>
+          <input type="password" name="password" required placeholder="••••••••" class="w-full bg-[#122218] border border-[#264230] rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <button type="submit" class="w-full btn-military-gold py-2.5 rounded-lg text-xs font-bold font-mono tracking-wider shadow-lg">
+          Authenticate & Enter
+        </button>
+
+        <div class="pt-3 border-t border-[#1F3627] flex items-center justify-between text-[11px] text-gray-400">
+          <span>Command Staff:</span>
+          <a href="/admin/login" class="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1 transition-colors">
+            <i class="fa-solid fa-user-shield"></i> Administrator Command Login &rarr;
+          </a>
+        </div>
+      </form>
+    </div>
+
+    <!-- Registration Form Card -->
+    <div class="bg-[#0C1610] border border-[#233C2B] rounded-xl p-6 sm:p-8 shadow-xl">
+      <h2 class="text-lg font-bold font-['Chakra_Petch'] text-white mb-1 flex items-center gap-2">
+        <i class="fa-solid fa-user-plus text-emerald-400"></i> Register New Aspirant
+      </h2>
+      <p class="text-xs text-gray-400 font-mono mb-5">Create your personalized preparation account</p>
+
+      <form method="POST" action="/register" class="space-y-3 text-xs font-mono">
+        <div>
+          <label class="block text-gray-300 mb-0.5">Full Legal Name <span class="text-rose-400">*</span></label>
+          <input type="text" name="full_name" required placeholder="e.g. Vikram Sharma" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-0.5">Unique Username <span class="text-rose-400">*</span></label>
+          <input type="text" name="username" required placeholder="e.g. vikram_cadet" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-0.5">Email Address <span class="text-rose-400">*</span></label>
+          <input type="email" name="email" required placeholder="vikram@example.com" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block text-gray-300 mb-0.5">Password <span class="text-rose-400">*</span></label>
+            <input type="password" name="password" required placeholder="••••••••" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-0.5">Confirm Password <span class="text-rose-400">*</span></label>
+            <input type="password" name="confirm_password" required placeholder="••••••••" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-0.5">Target Defence Goal</label>
+          <select name="target_exam" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+            <option value="UPSC NDA & NA">UPSC NDA & NA (Tri-Services)</option>
+            <option value="UPSC CDS Examination">UPSC CDS (IMA, INA, AFA, OTA)</option>
+            <option value="Indian Air Force AFCAT">Indian Air Force AFCAT</option>
+            <option value="Indian Army Agniveer GD">Indian Army Agniveer GD</option>
+            <option value="Indian Navy Agniveer SSR">Indian Navy Agniveer SSR</option>
+            <option value="SSC GD Constable">SSC GD Constable (CAPF)</option>
+            <option value="UPSC CAPF AC">UPSC CAPF Assistant Commandant</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white py-2.5 rounded font-bold font-mono tracking-wider shadow mt-2">
+          Create Aspirant Profile
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+</section>
+{% endblock %}

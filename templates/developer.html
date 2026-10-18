@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+
+{% block title %}Developer Dossier – Er. Prashant Mishra – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-12 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+  
+  <div class="bg-gradient-to-br from-[#0B1710] via-[#102317] to-[#08100B] border border-[#274633] rounded-2xl p-8 sm:p-12 shadow-2xl relative overflow-hidden">
+    
+    <!-- Top Corner Tactical Accent -->
+    <div class="military-card-hud"></div>
+
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+      
+      <!-- Developer Portrait Column (5 cols) -->
+      <div class="md:col-span-5 flex flex-col items-center">
+        <div class="relative group">
+          <div class="absolute -inset-1.5 bg-gradient-to-r from-amber-400 via-emerald-500 to-amber-500 rounded-2xl blur opacity-40 group-hover:opacity-75 transition duration-500"></div>
+          <!-- Uploaded and linked prashant image.jpeg -->
+          <img src="{{ dev.profile_image or '/static/uploads/developer/prashant_image.jpeg' }}" alt="{{ dev.name }}" class="relative w-64 h-80 object-cover rounded-xl border-2 border-amber-400 shadow-2xl">
+        </div>
+
+        <div class="mt-4 text-center">
+          <span class="inline-block px-3 py-1 bg-amber-950 text-amber-300 border border-amber-500/50 rounded-full text-xs font-mono font-bold">
+            LEAD SYSTEM ARCHITECT
+          </span>
+          <p class="text-[11px] text-gray-400 font-mono mt-1">DEFENCE PATH PLATFORM</p>
+        </div>
+      </div>
+
+      <!-- Developer Information Column (7 cols) -->
+      <div class="md:col-span-7 space-y-4">
+        
+        <div>
+          <span class="text-xs font-mono uppercase tracking-widest text-emerald-400 block mb-1">PROJECT DEVELOPER DOSSIER</span>
+          <h1 class="text-3xl sm:text-4xl font-extrabold text-white font-['Chakra_Petch']">
+            {{ dev.name }}
+          </h1>
+          <p class="text-sm font-bold text-amber-400 font-mono mt-1">
+            {{ dev.title }}
+          </p>
+          {% if dev.qualification %}
+            <p class="text-xs text-gray-300 font-mono mt-0.5">
+              <i class="fa-solid fa-graduation-cap text-emerald-400 mr-1"></i> {{ dev.qualification }}
+            </p>
+          {% endif %}
+        </div>
+
+        <!-- Biography -->
+        <div class="bg-[#09140D] border-l-4 border-l-amber-400 p-4 rounded-r-lg text-xs text-gray-200 leading-relaxed font-sans shadow">
+          {{ dev.bio }}
+        </div>
+
+        <!-- Direct Contact Specs -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 text-xs font-mono">
+          
+          <div class="bg-[#0D1B13] p-3 rounded-lg border border-[#1F3827]">
+            <span class="text-gray-400 block text-[10px] uppercase">Direct Phone Hotline:</span>
+            <a href="tel:{{ dev.contact_number }}" class="text-emerald-400 hover:text-emerald-300 font-bold text-sm flex items-center gap-1.5 mt-0.5">
+              <i class="fa-solid fa-phone text-xs"></i> {{ dev.contact_number }}
+            </a>
+          </div>
+
+          <div class="bg-[#0D1B13] p-3 rounded-lg border border-[#1F3827]">
+            <span class="text-gray-400 block text-[10px] uppercase">Official Email:</span>
+            {% if dev.email %}
+              <a href="mailto:{{ dev.email }}" class="text-amber-300 hover:underline font-bold mt-0.5 block truncate">
+                <i class="fa-solid fa-envelope text-xs mr-1"></i> {{ dev.email }}
+              </a>
+            {% else %}
+              <span class="text-gray-400 italic text-xs mt-0.5 block">
+                <i class="fa-solid fa-clock text-xs mr-1 text-amber-400"></i> Developer email will be available soon.
+              </span>
+            {% endif %}
+          </div>
+
+        </div>
+
+        <!-- Social & Action Links -->
+        <div class="pt-4 flex flex-wrap items-center gap-3">
+          <a href="/contact" class="btn-military-gold px-5 py-2.5 rounded-lg text-xs font-bold font-mono flex items-center gap-2 shadow">
+            <i class="fa-solid fa-paper-plane"></i> Send Direct Message
+          </a>
+
+          {% if session.get('role') == 'admin' %}
+            <a href="/admin/developer-profile" class="bg-[#1A3022] hover:bg-[#254532] text-amber-300 border border-amber-500/50 px-4 py-2.5 rounded-lg text-xs font-mono font-bold flex items-center gap-1.5">
+              <i class="fa-solid fa-pen"></i> Edit Profile in Admin Panel
+            </a>
+          {% endif %}
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+{% endblock %}

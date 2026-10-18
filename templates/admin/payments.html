@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}Payments & Attempt Verification Desk – Admin – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-receipt"></i>
+        <span>UPI QR TRANSACTION AUDIT DESK</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Payment Verifications & Access Grants
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-1">
+        Verify student UPI payments against bank ledger to authorize CBT examination attempts.
+      </p>
+    </div>
+
+    <div class="flex items-center space-x-2 text-xs font-mono">
+      <a href="/admin/settings" class="bg-[#14261B] hover:bg-[#1E3B2A] text-amber-300 border border-[#2B4E38] px-3 py-2 rounded">
+        <i class="fa-solid fa-qrcode mr-1"></i> Configure QR & Pricing
+      </a>
+    </div>
+  </div>
+
+  <!-- Filter Status Tabs -->
+  <div class="flex items-center space-x-2 mb-6 font-mono text-xs">
+    <a href="/admin/payments" class="px-3.5 py-1.5 rounded-lg border {% if not selected_status %}bg-amber-400 text-black border-amber-400 font-bold{% else %}bg-[#0F1C14] text-gray-300 border-[#22392A] hover:bg-[#152B1E]{% endif %}">
+      All Transactions ({{ total_count }})
+    </a>
+    <a href="/admin/payments?status=Pending" class="px-3.5 py-1.5 rounded-lg border {% if selected_status == 'Pending' %}bg-amber-400 text-black border-amber-400 font-bold{% else %}bg-[#0F1C14] text-amber-300 border-[#22392A] hover:bg-[#152B1E]{% endif %}">
+      Pending Action ({{ pending_count }})
+    </a>
+    <a href="/admin/payments?status=Verified" class="px-3.5 py-1.5 rounded-lg border {% if selected_status == 'Verified' %}bg-amber-400 text-black border-amber-400 font-bold{% else %}bg-[#0F1C14] text-emerald-300 border-[#22392A] hover:bg-[#152B1E]{% endif %}">
+      Verified ({{ verified_count }})
+    </a>
+    <a href="/admin/payments?status=Rejected" class="px-3.5 py-1.5 rounded-lg border {% if selected_status == 'Rejected' %}bg-amber-400 text-black border-amber-400 font-bold{% else %}bg-[#0F1C14] text-rose-300 border-[#22392A] hover:bg-[#152B1E]{% endif %}">
+      Rejected ({{ rejected_count }})
+    </a>
+  </div>
+
+  <!-- Transactions Table -->
+  <div class="bg-[#0C1610] border border-[#22392A] rounded-xl overflow-hidden shadow-2xl">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs font-mono">
+        <thead class="bg-[#112016] text-gray-300 border-b border-[#1E3626]">
+          <tr>
+            <th class="p-3">Ref ID / UTR</th>
+            <th class="p-3">Cadet Candidate</th>
+            <th class="p-3">Mock Test Target</th>
+            <th class="p-3">Amount</th>
+            <th class="p-3">Proof</th>
+            <th class="p-3">Submission Date</th>
+            <th class="p-3">Status</th>
+            <th class="p-3 text-right">Verification Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#182C1F]">
+          {% if payments %}
+            {% for p in payments %}
+              <tr class="hover:bg-[#122218] transition-colors">
+                <td class="p-3">
+                  <strong class="text-white block font-mono text-sm tracking-wide">{{ p.transaction_ref }}</strong>
+                  <span class="text-[10px] text-gray-400">Method: {{ p.payment_method }}</span>
+                </td>
+                <td class="p-3">
+                  <span class="text-white font-bold block">{{ p.full_name }}</span>
+                  <span class="text-gray-400 text-[11px]">{{ p.email }}</span>
+                </td>
+                <td class="p-3">
+                  <strong class="text-amber-300 block truncate max-w-xs" title="{{ p.paper_title }}">{{ p.paper_title }}</strong>
+                  <span class="text-[10px] text-emerald-400 font-mono">{{ p.exam_code }} &bull; {{ p.paper_type }}</span>
+                </td>
+                <td class="p-3 text-emerald-400 font-bold text-sm">
+                  ₹{{ p.amount }}
+                </td>
+                <td class="p-3">
+                  {% if p.proof_image %}
+                    <a href="{{ p.proof_image }}" target="_blank" class="text-amber-400 hover:text-amber-300 inline-flex items-center gap-1 underline text-[11px]">
+                      <i class="fa-solid fa-image"></i> View Receipt
+                    </a>
+                  {% else %}
+                    <span class="text-gray-500 italic text-[11px]">None</span>
+                  {% endif %}
+                </td>
+                <td class="p-3 text-gray-400 text-[11px]">
+                  {{ p.created_at }}
+                </td>
+                <td class="p-3">
+                  <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase
+                    {% if p.status == 'Verified' %}bg-emerald-950 text-emerald-400 border border-emerald-600
+                    {% elif p.status == 'Pending' %}bg-amber-950 text-amber-300 border border-amber-600 animate-pulse
+                    {% else %}bg-rose-950 text-rose-300 border border-rose-600{% endif %}">
+                    {{ p.status }}
+                  </span>
+                </td>
+                <td class="p-3 text-right">
+                  {% if p.status == 'Pending' %}
+                    <div class="flex items-center justify-end space-x-2">
+                      <form action="/admin/payments/verify/{{ p.id }}" method="POST" onsubmit="return confirm('Verify UTR {{ p.transaction_ref }} and grant exam attempt entitlement?');">
+                        <button type="submit" class="bg-emerald-800 hover:bg-emerald-700 text-white font-bold px-2.5 py-1 rounded text-[11px] font-mono flex items-center gap-1 shadow">
+                          <i class="fa-solid fa-check"></i> Verify & Unlock
+                        </button>
+                      </form>
+                      <form action="/admin/payments/reject/{{ p.id }}" method="POST" onsubmit="return confirm('Reject payment reference {{ p.transaction_ref }}?');">
+                        <button type="submit" class="bg-rose-900/60 hover:bg-rose-800 text-rose-200 px-2 py-1 rounded text-[11px] font-mono border border-rose-700">
+                          <i class="fa-solid fa-xmark"></i> Reject
+                        </button>
+                      </form>
+                    </div>
+                  {% else %}
+                    <span class="text-[10px] text-gray-500 font-mono">
+                      {% if p.status == 'Verified' %}Authorized{% else %}Declined{% endif %}
+                    </span>
+                  {% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="8" class="p-8 text-center text-gray-500 font-mono text-xs">
+                No payment transaction records found in this category.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+{% endblock %}

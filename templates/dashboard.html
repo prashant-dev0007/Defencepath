@@ -1,0 +1,283 @@
+{% extends "base.html" %}
+
+{% block title %}Student Command Dossier – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <!-- Aspirant Profile Banner -->
+  <div class="bg-gradient-to-r from-[#0C1711] via-[#13271A] to-[#0C1711] border border-[#254330] rounded-2xl p-6 sm:p-8 mb-8 shadow-2xl relative">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6">
+      
+      <!-- Profile & Welcome -->
+      <div class="flex items-center space-x-5">
+        <div class="relative">
+          <img src="{{ user.profile_image or '/static/uploads/developer/prashant_image.jpeg' }}" class="w-16 h-16 sm:w-20 sm:h-20 rounded-full object-cover border-2 border-amber-400 shadow-xl">
+          <span class="absolute bottom-0 right-0 w-4 h-4 bg-emerald-500 border-2 border-black rounded-full" title="Active Cadet Status"></span>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="text-xl sm:text-2xl font-bold font-['Chakra_Petch'] text-white">
+              Welcome, {{ user.full_name }}
+            </h1>
+            <span class="badge-gold px-2 py-0.5 rounded text-[10px]">CADET DOSSIER</span>
+          </div>
+          <p class="text-xs text-amber-300 font-mono mt-0.5">
+            Target Service Goal: <strong class="text-white">{{ user.target_exam or 'NDA & CDS Commissioned Officer' }}</strong>
+          </p>
+          <p class="text-xs text-gray-400 mt-1 font-mono">
+            Username: @{{ user.username }} &bull; Contact: {{ user.phone or 'Confidential' }}
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Actions -->
+      <div class="flex flex-wrap gap-2">
+        <a href="/tests" class="btn-military-gold px-4 py-2 rounded text-xs font-bold font-mono flex items-center gap-1.5 shadow">
+          <i class="fa-solid fa-play"></i> Attempt Mock Test
+        </a>
+        <a href="/weakness-analysis" class="bg-[#192E21] hover:bg-[#223E2D] text-amber-300 border border-[#2F523A] px-3.5 py-2 rounded text-xs font-mono font-bold transition-all flex items-center gap-1.5">
+          <i class="fa-solid fa-chart-pie"></i> Weakness Analysis
+        </a>
+        <a href="/my-applications" class="bg-[#122017] hover:bg-[#1A2E21] text-gray-200 border border-[#274431] px-3.5 py-2 rounded text-xs font-mono transition-all flex items-center gap-1.5">
+          <i class="fa-solid fa-file-signature"></i> Track Applications
+        </a>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Key Statistics Grid -->
+  <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
+    
+    <div class="bg-[#0C1610] border border-[#203627] p-5 rounded-xl shadow-lg">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-mono text-gray-400 uppercase">Tests Attempted</span>
+        <i class="fa-solid fa-award text-amber-400 text-lg"></i>
+      </div>
+      <p class="text-3xl font-extrabold font-mono text-white mt-2">{{ total_attempts }}</p>
+      <p class="text-[11px] text-emerald-400 font-mono mt-1">Verified CBT Sessions</p>
+    </div>
+
+    <div class="bg-[#0C1610] border border-[#203627] p-5 rounded-xl shadow-lg">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-mono text-gray-400 uppercase">Avg Accuracy</span>
+        <i class="fa-solid fa-bullseye text-emerald-400 text-lg"></i>
+      </div>
+      <p class="text-3xl font-extrabold font-mono text-emerald-400 mt-2">{{ avg_accuracy }}%</p>
+      <p class="text-[11px] text-gray-400 font-mono mt-1">Calculated from Real Tests</p>
+    </div>
+
+    <div class="bg-[#0C1610] border border-[#203627] p-5 rounded-xl shadow-lg">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-mono text-gray-400 uppercase">Tracked Applications</span>
+        <i class="fa-solid fa-clipboard-list text-blue-400 text-lg"></i>
+      </div>
+      <p class="text-3xl font-extrabold font-mono text-blue-400 mt-2">{{ tracked_count }}</p>
+      <p class="text-[11px] text-blue-300 font-mono mt-1">Recruitment Portals</p>
+    </div>
+
+    <div class="bg-[#0C1610] border border-[#203627] p-5 rounded-xl shadow-lg">
+      <div class="flex items-center justify-between">
+        <span class="text-xs font-mono text-gray-400 uppercase">Study Tasks Active</span>
+        <i class="fa-solid fa-calendar-check text-purple-400 text-lg"></i>
+      </div>
+      <p class="text-3xl font-extrabold font-mono text-purple-400 mt-2">{{ pending_tasks }}</p>
+      <p class="text-[11px] text-purple-300 font-mono mt-1">Daily Target Schedule</p>
+    </div>
+
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Column (8 cols): Recent Tests & Weakness Summary -->
+    <div class="lg:col-span-8 space-y-8">
+      
+      <!-- Recent Test Results Table -->
+      <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#1C3224]">
+          <h3 class="text-base font-bold font-['Chakra_Petch'] text-white flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-amber-400"></i> Recent Examination Attempts
+          </h3>
+          <a href="/tests" class="text-xs font-mono text-amber-400 hover:underline">Browse All Tests &rarr;</a>
+        </div>
+
+        {% if attempts %}
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-xs font-mono">
+              <thead class="bg-[#112016] text-gray-300 border-b border-[#1E3626]">
+                <tr>
+                  <th class="p-3">Paper Title</th>
+                  <th class="p-3">Score</th>
+                  <th class="p-3">Accuracy</th>
+                  <th class="p-3">Attempt Date</th>
+                  <th class="p-3">Dossier Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[#182C1F]">
+                {% for a in attempts %}
+                  <tr class="hover:bg-[#122218] transition-colors">
+                    <td class="p-3 text-white font-bold">{{ a.paper_title }}</td>
+                    <td class="p-3 text-amber-400 font-bold">{{ a.score }} / {{ a.max_marks }}</td>
+                    <td class="p-3 {% if a.accuracy_percent >= 70 %}text-emerald-400{% elif a.accuracy_percent >= 50 %}text-amber-400{% else %}text-rose-400{% endif %} font-bold">
+                      {{ a.accuracy_percent }}%
+                    </td>
+                    <td class="p-3 text-gray-400">{{ a.attempt_date }}</td>
+                    <td class="p-3">
+                      <a href="/test-result/{{ a.id }}" class="text-emerald-400 hover:text-emerald-300 font-bold underline">
+                        Review Solutions &rarr;
+                      </a>
+                    </td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        {% else %}
+          <div class="p-8 text-center bg-[#09120D] rounded-lg">
+            <p class="text-xs text-gray-400 mb-3">No test attempts recorded yet. Begin by attempting your first authentic PYQ or Mock exam.</p>
+            <a href="/tests" class="btn-military-gold px-4 py-2 rounded text-xs font-bold font-mono">Start CBT Test</a>
+          </div>
+        {% endif %}
+      </div>
+
+      <!-- Weakness & Recommendation Highlights -->
+      <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-6 shadow-xl">
+        <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#1C3224]">
+          <h3 class="text-base font-bold font-['Chakra_Petch'] text-white flex items-center gap-2">
+            <i class="fa-solid fa-crosshairs text-rose-400"></i> Subject & Topic Diagnostic Summary
+          </h3>
+          <a href="/weakness-analysis" class="text-xs font-mono text-emerald-400 hover:underline">Full Analytics Dossier &rarr;</a>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+          <div class="bg-[#121E16] border border-rose-500/30 p-4 rounded-lg">
+            <span class="text-rose-400 font-bold uppercase tracking-wider block mb-2">Priority Focus Topics (&lt; 50% Accuracy)</span>
+            {% if weak_topics %}
+              <ul class="space-y-1.5 text-gray-200">
+                {% for wt in weak_topics %}
+                  <li class="flex items-center justify-between">
+                    <span>• {{ wt.topic }} ({{ wt.subject }})</span>
+                    <strong class="text-rose-400">{{ wt.accuracy }}%</strong>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-gray-400 italic">No critical weak topics identified. Keep maintaining your score standards.</p>
+            {% endif %}
+          </div>
+
+          <div class="bg-[#121E16] border border-emerald-500/30 p-4 rounded-lg">
+            <span class="text-emerald-400 font-bold uppercase tracking-wider block mb-2">Strong Command Pillars (&gt; 70% Accuracy)</span>
+            {% if strong_topics %}
+              <ul class="space-y-1.5 text-gray-200">
+                {% for st in strong_topics %}
+                  <li class="flex items-center justify-between">
+                    <span>• {{ st.topic }} ({{ st.subject }})</span>
+                    <strong class="text-emerald-400">{{ st.accuracy }}%</strong>
+                  </li>
+                {% endfor %}
+              </ul>
+            {% else %}
+              <p class="text-gray-400 italic">Complete more tests to populate your strong subject registry.</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Column (4 cols): Tracked Applications & Saved Jobs -->
+    <div class="lg:col-span-4 space-y-6">
+      
+      <!-- Tracked Applications Card -->
+      <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-5 shadow-xl">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-[#1C3224]">
+          <h4 class="text-xs font-bold font-mono uppercase tracking-wider text-amber-400">
+            My Applications ({{ tracked_apps|length }})
+          </h4>
+          <a href="/my-applications" class="text-[11px] font-mono text-emerald-400 hover:underline">Manage &rarr;</a>
+        </div>
+
+        {% if tracked_apps %}
+          <div class="space-y-3">
+            {% for app in tracked_apps %}
+              <div class="bg-[#101D14] border border-[#1E3424] p-3 rounded-lg text-xs font-mono">
+                <div class="flex items-center justify-between mb-1">
+                  <span class="font-bold text-white truncate max-w-[170px]">{{ app.exam_name }}</span>
+                  <span class="px-2 py-0.5 rounded text-[9px] font-bold uppercase bg-blue-950 text-blue-300 border border-blue-600">
+                    {{ app.status }}
+                  </span>
+                </div>
+                <p class="text-[11px] text-gray-400">Ref: {{ app.reference_number or 'Not assigned' }}</p>
+                <p class="text-[11px] text-amber-300 mt-1">Exam: {{ app.exam_date or 'To be announced' }}</p>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-xs text-gray-400 font-mono italic">No applications currently tracked in your profile.</p>
+        {% endif %}
+      </div>
+
+      <!-- Saved Recruitment Notices -->
+      <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-5 shadow-xl">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-[#1C3224]">
+          <h4 class="text-xs font-bold font-mono uppercase tracking-wider text-amber-400">
+            Saved Job Notices ({{ saved_jobs|length }})
+          </h4>
+          <a href="/jobs" class="text-[11px] font-mono text-emerald-400 hover:underline">Find Jobs &rarr;</a>
+        </div>
+
+        {% if saved_jobs %}
+          <div class="space-y-3">
+            {% for j in saved_jobs %}
+              <div class="bg-[#101D14] border border-[#1E3424] p-3 rounded-lg text-xs">
+                <p class="font-bold text-white hover:text-amber-400 leading-snug mb-1">
+                  <a href="/jobs/{{ j.id }}">{{ j.title }}</a>
+                </p>
+                <div class="flex items-center justify-between font-mono text-[10px] text-gray-400">
+                  <span>{{ j.organization }}</span>
+                  <span class="text-rose-400">Closes: {{ j.closing_date }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-xs text-gray-400 font-mono italic">No job notifications saved yet.</p>
+        {% endif %}
+      </div>
+
+      <!-- Study Planner Quick View -->
+      <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-5 shadow-xl">
+        <div class="flex items-center justify-between mb-3 pb-2 border-b border-[#1C3224]">
+          <h4 class="text-xs font-bold font-mono uppercase tracking-wider text-purple-400">
+            Study Planner Tasks
+          </h4>
+          <a href="/study-planner" class="text-[11px] font-mono text-purple-300 hover:underline">Add Task &rarr;</a>
+        </div>
+
+        {% if study_tasks %}
+          <div class="space-y-2">
+            {% for t in study_tasks %}
+              <div class="flex items-start gap-2 bg-[#101D14] p-2.5 rounded border border-[#1E3424] text-xs font-mono">
+                <i class="fa-solid {% if t.is_completed %}fa-circle-check text-emerald-400{% else %}fa-circle-dot text-amber-400{% endif %} mt-0.5"></i>
+                <div class="flex-1">
+                  <p class="{% if t.is_completed %}line-through text-gray-500{% else %}text-gray-200 font-semibold{% endif %} leading-snug">
+                    {{ t.title }}
+                  </p>
+                  <span class="text-[10px] text-gray-400">{{ t.subject }} &bull; Target: {{ t.target_date }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-xs text-gray-400 font-mono italic">No active tasks in study planner.</p>
+        {% endif %}
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+{% endblock %}

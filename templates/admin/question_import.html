@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}Bulk Question Importer – Admin – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+  
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-file-import"></i>
+        <span>AUTHENTIC QUESTION INVENTORY IMPORT</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Bulk Question Importer (JSON / CSV)
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-1">
+        Import authentic questions in bulk with mathematical explanations, Hindi/English bilingual texts, and auto-validation.
+      </p>
+    </div>
+
+    <a href="/admin/pyqs" class="bg-[#14261B] hover:bg-[#1E3B2A] text-amber-300 border border-[#2B4E38] px-3.5 py-2 rounded text-xs font-mono">
+      &larr; Back to Questions Manager
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+    
+    <!-- Left Column: Upload Form (7 cols) -->
+    <div class="md:col-span-7">
+      <div class="bg-[#0C1610] border border-amber-500/40 rounded-xl p-6 shadow-2xl">
+        <h3 class="text-base font-bold text-white font-['Chakra_Petch'] mb-4 pb-3 border-b border-[#1E3526] flex items-center gap-2">
+          <i class="fa-solid fa-cloud-arrow-up text-amber-400"></i> Upload Questions File
+        </h3>
+
+        <form method="POST" action="/admin/questions/import-file" enctype="multipart/form-data" class="space-y-4 text-xs font-mono">
+          <div>
+            <label class="block text-gray-300 mb-1">Target Examination Paper <span class="text-rose-400">*</span></label>
+            <select name="paper_id" required class="w-full bg-[#122218] border border-[#264230] rounded p-2.5 text-white">
+              {% for p in papers %}
+                <option value="{{ p.id }}">{{ p.title }} ({{ p.exam_code }} &bull; {{ p.subject }})</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-gray-300 mb-1">Select File (JSON or CSV) <span class="text-rose-400">*</span></label>
+            <input type="file" name="import_file" accept=".json, .csv" required class="w-full text-xs text-gray-300 file:mr-3 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-mono file:bg-amber-400 file:text-black cursor-pointer bg-[#122218] border border-[#264230] p-2 rounded">
+            <p class="text-[10px] text-gray-400 mt-1">Accepted formats: Valid .JSON array of objects or standard .CSV with headers.</p>
+          </div>
+
+          <div class="bg-[#08120B] p-3.5 rounded border border-[#1A2E20] space-y-1 text-[11px] text-gray-300">
+            <p class="text-emerald-400 font-bold">✓ Duplicate Detection Active</p>
+            <p>Questions matching existing question text in the target paper will be skipped automatically to maintain question integrity.</p>
+          </div>
+
+          <div class="pt-3 border-t border-[#1E3526]">
+            <button type="submit" class="w-full btn-military-gold py-3 rounded-lg font-bold font-mono text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-xl">
+              <i class="fa-solid fa-file-circle-check"></i> Parse, Validate & Import Questions
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Right Column: Format Specs & Template Download (5 cols) -->
+    <div class="md:col-span-5 space-y-6 text-xs font-mono">
+      <div class="bg-[#0C1610] border border-[#203627] rounded-xl p-6 shadow-2xl space-y-3">
+        <h3 class="text-sm font-bold text-amber-300 uppercase tracking-wider border-b border-[#1E3526] pb-2">
+          Required Field Schema
+        </h3>
+        <p class="text-gray-300 text-[11px] leading-relaxed">
+          Both JSON and CSV formats must provide the following columns:
+        </p>
+        <ul class="text-[11px] text-gray-400 space-y-1 list-disc pl-4">
+          <li><code class="text-amber-300">subject</code>: e.g. Mathematics, English</li>
+          <li><code class="text-amber-300">topic</code>: e.g. Trigonometry, Percentage</li>
+          <li><code class="text-amber-300">question_text_en</code>: English text</li>
+          <li><code class="text-amber-300">question_text_hi</code>: (Optional) Hindi</li>
+          <li><code class="text-amber-300">option_a_en</code>, <code class="text-amber-300">option_b_en</code>, <code class="text-amber-300">option_c_en</code>, <code class="text-amber-300">option_d_en</code></li>
+          <li><code class="text-amber-300">correct_option</code>: 'A', 'B', 'C', or 'D'</li>
+          <li><code class="text-amber-300">explanation_en</code>: Detailed step-by-step solution</li>
+          <li><code class="text-amber-300">difficulty</code>: Easy, Moderate, or Hard</li>
+        </ul>
+
+        <div class="pt-3 border-t border-[#1E3526]">
+          <h4 class="text-xs font-bold text-white mb-2">Sample JSON Payload:</h4>
+          <pre class="bg-[#070D09] p-2.5 rounded text-[10px] text-emerald-400 overflow-x-auto border border-[#16271D]">[
+  {
+    "subject": "Mathematics",
+    "topic": "Matrices",
+    "question_text_en": "If matrix A is symmetric...",
+    "option_a_en": "A' = A",
+    "option_b_en": "A' = -A",
+    "option_c_en": "|A| = 0",
+    "option_d_en": "None",
+    "correct_option": "A",
+    "explanation_en": "By definition A' = A",
+    "difficulty": "Moderate"
+  }
+]</pre>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+{% endblock %}

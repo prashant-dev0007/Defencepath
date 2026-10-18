@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Project Developer – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+  
+  <!-- Header Banner -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325]">
+    <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+      <i class="fa-solid fa-headset text-emerald-400"></i>
+      <span>COMMUNICATION FREQUENCY</span>
+    </div>
+    <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+      Contact Project Developer
+    </h1>
+    <p class="text-sm text-gray-400 mt-1 max-w-2xl">
+      Connect directly with the developer and system architect of DEFENCE PATH for inquiries, technical feedback, and recruitment portal assistance.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Column: Developer Contact Dossier (5 cols) -->
+    <div class="lg:col-span-5 bg-[#0C1610] border border-[#233C2B] rounded-2xl p-6 sm:p-8 shadow-xl flex flex-col justify-between">
+      <div>
+        <!-- Developer Photograph Uploaded per instruction -->
+        <div class="flex items-center space-x-4 mb-6 pb-6 border-b border-[#1E3325]">
+          <img src="{{ dev.profile_image or '/static/uploads/developer/prashant_image.jpeg' }}" alt="{{ dev.name }}" class="w-20 h-24 object-cover rounded-xl border-2 border-amber-400 shadow-lg">
+          <div>
+            <h2 class="text-xl font-bold font-['Chakra_Petch'] text-white">{{ dev.name }}</h2>
+            <p class="text-xs text-amber-400 font-mono">{{ dev.title }}</p>
+            <span class="inline-block mt-2 px-2 py-0.5 bg-emerald-950 text-emerald-400 border border-emerald-600 rounded text-[10px] font-mono font-bold">
+              VERIFIED ARCHITECT
+            </span>
+          </div>
+        </div>
+
+        <div class="space-y-4 text-xs font-mono">
+          <div class="bg-[#101C14] border border-[#1E3325] p-3.5 rounded-lg">
+            <span class="text-gray-400 block text-[10px] uppercase">Direct Phone Hotline:</span>
+            <a href="tel:{{ dev.contact_number }}" class="text-emerald-400 hover:text-emerald-300 font-bold text-base flex items-center gap-2 mt-1">
+              <i class="fa-solid fa-phone"></i> {{ dev.contact_number }}
+            </a>
+          </div>
+
+          <div class="bg-[#101C14] border border-[#1E3325] p-3.5 rounded-lg">
+            <span class="text-gray-400 block text-[10px] uppercase">Direct Email Address:</span>
+            {% if dev.email %}
+              <a href="mailto:{{ dev.email }}" class="text-amber-300 font-bold text-sm flex items-center gap-2 mt-1">
+                <i class="fa-solid fa-envelope"></i> {{ dev.email }}
+              </a>
+            {% else %}
+              <div class="text-gray-300 italic text-xs flex items-center gap-2 mt-1">
+                <i class="fa-solid fa-circle-info text-amber-400"></i>
+                <span>Developer email will be available soon.</span>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="bg-[#101C14] border border-[#1E3325] p-3.5 rounded-lg">
+            <span class="text-gray-400 block text-[10px] uppercase">Operational Mission:</span>
+            <p class="text-gray-200 mt-1 leading-relaxed">
+              DEFENCE PATH is an enterprise-grade digital portal providing accurate recruitment notices, authentic PYQ sets, and rigorous CBT examination simulations.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-6 border-t border-[#1E3325] mt-6 text-center">
+        <a href="/developer-profile" class="text-xs font-mono text-amber-400 hover:text-amber-300 underline">
+          View Detailed Developer Dossier &rarr;
+        </a>
+      </div>
+    </div>
+
+    <!-- Right Column: Interactive Contact Form (7 cols) -->
+    <div class="lg:col-span-7 bg-[#0C1610] border border-[#233C2B] rounded-2xl p-6 sm:p-8 shadow-xl">
+      <h3 class="text-lg font-bold font-['Chakra_Petch'] text-white mb-2 pb-3 border-b border-[#1E3325] flex items-center gap-2">
+        <i class="fa-solid fa-paper-plane text-amber-400"></i> Send Secure Message to Developer
+      </h3>
+      <p class="text-xs text-gray-400 font-mono mb-6">
+        Messages are securely logged in the administrator dispatch console and processed directly.
+      </p>
+
+      <form method="POST" action="/contact" class="space-y-4 text-xs">
+        <div>
+          <label class="block font-mono text-gray-300 mb-1">Your Full Name <span class="text-rose-400">*</span></label>
+          <input type="text" name="name" required placeholder="e.g. Cadet Rahul Sharma" class="w-full bg-[#122218] border border-[#264230] rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block font-mono text-gray-300 mb-1">Your Email Address <span class="text-rose-400">*</span></label>
+          <input type="email" name="email" required placeholder="e.g. rahul@example.com" class="w-full bg-[#122218] border border-[#264230] rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block font-mono text-gray-300 mb-1">Subject <span class="text-rose-400">*</span></label>
+          <input type="text" name="subject" required placeholder="e.g. College Evaluation / Platform Query / Feature Feedback" class="w-full bg-[#122218] border border-[#264230] rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block font-mono text-gray-300 mb-1">Your Message <span class="text-rose-400">*</span></label>
+          <textarea name="message" rows="5" required placeholder="Type your detailed communication here..." class="w-full bg-[#122218] border border-[#264230] rounded-lg p-2.5 text-white focus:outline-none focus:border-amber-400"></textarea>
+        </div>
+
+        <button type="submit" class="w-full btn-military-gold py-3 rounded-lg text-xs font-bold font-mono tracking-wider shadow-lg flex items-center justify-center gap-2">
+          <i class="fa-solid fa-paper-plane"></i> Transmit Message
+        </button>
+      </form>
+    </div>
+
+  </div>
+
+</section>
+{% endblock %}

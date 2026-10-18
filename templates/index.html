@@ -1,0 +1,627 @@
+{% extends "base.html" %}
+
+{% block title %}DEFENCE PATH – India's Premier Defence Recruitment & Examination Portal{% endblock %}
+
+{% block content %}
+<!-- HERO SECTION -->
+<section class="hero-banner relative py-20 lg:py-28 px-4 sm:px-6 lg:px-8 border-b border-[#1E3325]">
+  <div class="absolute inset-0 hero-overlay pointer-events-none"></div>
+  <div class="max-w-7xl mx-auto relative z-10">
+    <div class="max-w-3xl">
+      
+      <!-- Operational Status Pill -->
+      <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-[#112317]/90 border border-amber-400/40 text-amber-300 text-xs font-mono mb-6">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="font-bold tracking-wider">DEFENCE RECRUITMENT INTELLIGENCE & CBT ENGINE</span>
+      </div>
+
+      <!-- Main Headline -->
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold font-['Chakra_Petch'] text-white tracking-tight leading-tight mb-4" data-i18n="hero_title">
+        YOUR JOURNEY TO THE UNIFORM STARTS HERE
+      </h1>
+
+      <!-- Subtitle -->
+      <p class="text-lg sm:text-xl text-gray-300 mb-8 leading-relaxed font-light" data-i18n="hero_subtitle">
+        Explore Defence Careers. Practice Real Exam Patterns. Analyse Your Performance. Prepare With Confidence.
+      </p>
+
+      <!-- CTA Buttons -->
+      <div class="flex flex-wrap gap-4 mb-10">
+        <a href="/jobs" class="btn-military-gold px-6 py-3.5 rounded-lg flex items-center gap-2 font-bold text-sm shadow-xl" data-i18n="btn_explore_jobs">
+          <i class="fa-solid fa-briefcase"></i> Explore Defence Jobs
+        </a>
+        <a href="/tests" class="btn-military-outline px-6 py-3.5 rounded-lg flex items-center gap-2 font-bold text-sm" data-i18n="btn_free_mock">
+          <i class="fa-solid fa-stopwatch"></i> Start Free Mock Test
+        </a>
+        <a href="/pyq" class="bg-[#15271D] hover:bg-[#1D3628] text-amber-300 border border-[#2B4E38] px-5 py-3.5 rounded-lg flex items-center gap-2 font-semibold text-sm transition-all" data-i18n="btn_explore_pyqs">
+          <i class="fa-solid fa-book-open"></i> Explore PYQs
+        </a>
+        <a href="/eligibility" class="bg-[#121E17] hover:bg-[#1B2E23] text-emerald-400 border border-[#254231] px-5 py-3.5 rounded-lg flex items-center gap-2 font-semibold text-sm transition-all" data-i18n="btn_check_eligibility">
+          <i class="fa-solid fa-user-check"></i> Check Eligibility
+        </a>
+      </div>
+
+      <!-- Live Database Dynamic Platform Statistics -->
+      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-6 border-t border-[#1C3224]/80">
+        
+        <div class="bg-[#0C1610]/80 p-3 rounded-lg border border-[#1E3526]">
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold font-mono text-amber-400">{{ stats.exams_count }}</span>
+            <span class="bg-[#13251A] text-amber-400 border border-amber-500/40 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider">LIVE</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-1" data-i18n="stat_exams">Listed Defence Exams</p>
+        </div>
+
+        <div class="bg-[#0C1610]/80 p-3 rounded-lg border border-[#1E3526]">
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold font-mono text-emerald-400">{{ stats.active_jobs }}</span>
+            <span class="bg-[#13251A] text-emerald-400 border border-emerald-500/40 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider">VERIFIED</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-1" data-i18n="stat_notices">Active Job Notices</p>
+        </div>
+
+        <div class="bg-[#0C1610]/80 p-3 rounded-lg border border-[#1E3526]">
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold font-mono text-blue-400">{{ stats.tests_count }}</span>
+            <span class="bg-[#13251A] text-blue-400 border border-blue-500/40 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider">CBT READY</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-1" data-i18n="stat_tests">Practice Tests & PYQs</p>
+        </div>
+
+        <div class="bg-[#0C1610]/80 p-3 rounded-lg border border-[#1E3526]">
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold font-mono text-purple-400">{{ stats.users_count }}</span>
+            <span class="bg-[#13251A] text-purple-400 border border-purple-500/40 px-1.5 py-0.5 rounded text-[9px] font-mono font-bold tracking-wider">ACTIVE</span>
+          </div>
+          <p class="text-xs text-gray-400 mt-1" data-i18n="stat_aspirants">Registered Aspirants</p>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- LIVE ANNOUNCEMENTS TICKER -->
+<section class="bg-[#0B150F] border-b border-[#1C2F22] py-2.5 px-4 font-mono text-xs">
+  <div class="max-w-7xl mx-auto flex items-center space-x-3">
+    <span class="bg-amber-400 text-black px-2 py-0.5 rounded font-bold uppercase tracking-wider text-[10px] shrink-0">
+      ANNOUNCEMENTS
+    </span>
+    <div class="overflow-hidden whitespace-nowrap text-gray-300 text-xs">
+      {% for ann in announcements %}
+        <span class="mr-8 inline-flex items-center gap-1.5">
+          <i class="fa-solid fa-bullhorn text-amber-400 text-[10px]"></i>
+          <span class="text-white font-medium">[{{ ann.category }}] {{ ann.title }}</span>: {{ ann.content }}
+        </span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 1: LATEST RECRUITMENT NOTIFICATIONS -->
+<section class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-[#1C2F22] gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-radar text-emerald-400"></i>
+        <span class="uppercase tracking-widest">LIVE RECRUITMENT INTELLIGENCE</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-bold font-['Chakra_Petch'] text-white" data-i18n="sec_latest_jobs">
+        Latest Defence Recruitment Notices
+      </h2>
+      <p class="text-sm text-gray-400 mt-1">Official vacancies across Indian Army, Navy, Air Force, Coast Guard & CAPF</p>
+    </div>
+    <a href="/jobs" class="inline-flex items-center text-xs font-bold text-amber-400 hover:text-amber-300 font-mono gap-1.5 bg-[#122117] px-4 py-2 rounded border border-[#254231] hover:border-amber-400 transition-all">
+      VIEW ALL NOTICES ({{ stats.active_jobs }}) &rarr;
+    </a>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for job in recent_jobs %}
+      <div class="military-card military-card-hud p-5 flex flex-col justify-between">
+        <div>
+          <!-- Header & Status Badge -->
+          <div class="flex items-start justify-between gap-2 mb-3">
+            <span class="px-2.5 py-1 rounded text-xs font-bold font-mono uppercase tracking-wider
+              {% if job.status == 'Currently Open' %}bg-emerald-950 text-emerald-400 border border-emerald-600
+              {% elif job.status == 'Closing Soon' %}bg-amber-950 text-amber-300 border border-amber-600 animate-pulse
+              {% elif job.status == 'Upcoming' %}bg-blue-950 text-blue-300 border border-blue-600
+              {% elif job.status == 'Admit Card Released' %}bg-purple-950 text-purple-300 border border-purple-600
+              {% else %}bg-gray-800 text-gray-300 border border-gray-600{% endif %}">
+              {{ job.status }}
+            </span>
+            <span class="bg-[#122218] border border-[#23422E] text-emerald-400 font-mono px-2 py-0.5 rounded text-[10px]">VERIFIED NOTICE</span>
+          </div>
+
+          <h3 class="text-lg font-bold text-white mb-2 leading-snug hover:text-amber-400 transition-colors">
+            <a href="/jobs/{{ job.id }}">{{ job.title }}</a>
+          </h3>
+
+          <div class="text-xs text-gray-400 space-y-1.5 mb-4">
+            <p class="flex items-center gap-2">
+              <i class="fa-solid fa-building-shield text-amber-400/80 w-4"></i>
+              <span><strong>Org:</strong> {{ job.organization }}</span>
+            </p>
+            <p class="flex items-center gap-2">
+              <i class="fa-solid fa-graduation-cap text-emerald-400/80 w-4"></i>
+              <span><strong>Eligibility:</strong> {{ job.qualification }}</span>
+            </p>
+            <p class="flex items-center gap-2">
+              <i class="fa-solid fa-cake-candles text-blue-400/80 w-4"></i>
+              <span><strong>Age Limit:</strong> {{ job.min_age }} – {{ job.max_age }} Yrs</span>
+            </p>
+            <p class="flex items-center gap-2">
+              <i class="fa-solid fa-calendar-xmark text-rose-400/80 w-4"></i>
+              <span><strong>Deadline:</strong> <span class="text-rose-300 font-mono font-semibold">{{ job.closing_date }}</span></span>
+            </p>
+          </div>
+        </div>
+
+        <!-- Action Row -->
+        <div class="pt-4 border-t border-[#1F3325] flex items-center justify-between text-xs font-mono">
+          <a href="/jobs/{{ job.id }}" class="text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1">
+            Details & Criteria &rarr;
+          </a>
+          <a href="{{ job.application_url }}" target="_blank" rel="noopener noreferrer" class="bg-[#1C3224] hover:bg-amber-400 hover:text-black text-gray-200 px-3 py-1.5 rounded transition-all flex items-center gap-1 font-semibold">
+            Apply Portal <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- SECTION 2: DEFENCE RECRUITMENT WINGS / POPULAR EXAMS -->
+<section class="py-16 bg-[#09120D] border-y border-[#182B1F] px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    
+    <div class="text-center max-w-2xl mx-auto mb-12">
+      <div class="inline-flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-star text-amber-400"></i>
+        <span>TRI-SERVICES & PARAMILITARY SPECIALIZED ENTRIES</span>
+      </div>
+      <h2 class="text-3xl font-bold font-['Chakra_Petch'] text-white" data-i18n="sec_popular_exams">
+        Popular Defence Career Examinations
+      </h2>
+      <p class="text-sm text-gray-400 mt-2">Verified eligibility criteria, examination stages, physical standards & patterns</p>
+    </div>
+
+    <!-- 4 Specialized Defence Categories -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      
+      <!-- Indian Army Card -->
+      <div class="military-card p-6 border-l-4 border-l-emerald-500">
+        <div class="w-12 h-12 rounded-lg bg-emerald-950/80 border border-emerald-600/50 flex items-center justify-center text-emerald-400 text-2xl mb-4">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Indian Army</h3>
+        <p class="text-xs text-gray-400 mb-4 leading-relaxed">
+          Commissioned Officer entries (NDA, CDS IMA/OTA, TGC, SSC Tech, NCC) & Agnipath soldier entries (GD, Tech, Tradesmen, Clerk).
+        </p>
+        <ul class="text-xs space-y-1.5 text-gray-300 font-mono mb-5">
+          <li>• Agniveer GD (10th pass)</li>
+          <li>• Agniveer Tech (12th PCM)</li>
+          <li>• NDA Army Wing (12th)</li>
+          <li>• CDS Army Entry (Graduation)</li>
+        </ul>
+        <a href="/jobs?category=Army" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 flex items-center gap-1 font-mono">
+          Explore Army Entries &rarr;
+        </a>
+      </div>
+
+      <!-- Indian Navy Card -->
+      <div class="military-card p-6 border-l-4 border-l-cyan-500">
+        <div class="w-12 h-12 rounded-lg bg-cyan-950/80 border border-cyan-600/50 flex items-center justify-center text-cyan-400 text-2xl mb-4">
+          <i class="fa-solid fa-anchor"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Indian Navy</h3>
+        <p class="text-xs text-gray-400 mb-4 leading-relaxed">
+          Warship commands and technical operational wings for Officers (NDA Naval Academy, CDS INA, 10+2 B.Tech) & Agniveer Sailors (SSR, MR).
+        </p>
+        <ul class="text-xs space-y-1.5 text-gray-300 font-mono mb-5">
+          <li>• Agniveer SSR (10+2 PCM)</li>
+          <li>• Agniveer MR (10th pass)</li>
+          <li>• NDA Naval Wing (12th PCM)</li>
+          <li>• CDS INA (B.E./B.Tech)</li>
+        </ul>
+        <a href="/jobs?category=Navy" class="text-xs font-bold text-cyan-400 hover:text-cyan-300 flex items-center gap-1 font-mono">
+          Explore Navy Entries &rarr;
+        </a>
+      </div>
+
+      <!-- Indian Air Force Card -->
+      <div class="military-card p-6 border-l-4 border-l-blue-500">
+        <div class="w-12 h-12 rounded-lg bg-blue-950/80 border border-blue-600/50 flex items-center justify-center text-blue-400 text-2xl mb-4">
+          <i class="fa-solid fa-jet-fighter"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Indian Air Force</h3>
+        <p class="text-xs text-gray-400 mb-4 leading-relaxed">
+          Guard the Indian skies. AFCAT Officer commissioning (Flying, Technical, Ground Duty), NDA Air Force Wing, & Agniveervayu intake.
+        </p>
+        <ul class="text-xs space-y-1.5 text-gray-300 font-mono mb-5">
+          <li>• AFCAT Entry (Graduate 60%)</li>
+          <li>• Agniveervayu (Science/Other)</li>
+          <li>• NDA Air Force Wing (12th)</li>
+          <li>• CDS Air Force Academy</li>
+        </ul>
+        <a href="/jobs?category=Air Force" class="text-xs font-bold text-blue-400 hover:text-blue-300 flex items-center gap-1 font-mono">
+          Explore Air Force Entries &rarr;
+        </a>
+      </div>
+
+      <!-- CAPF & Uniformed Forces -->
+      <div class="military-card p-6 border-l-4 border-l-amber-500">
+        <div class="w-12 h-12 rounded-lg bg-amber-950/80 border border-amber-600/50 flex items-center justify-center text-amber-400 text-2xl mb-4">
+          <i class="fa-solid fa-person-military-rifle"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">CAPF & Paramilitary</h3>
+        <p class="text-xs text-gray-400 mb-4 leading-relaxed">
+          National internal security & border defense: UPSC CAPF Assistant Commandant, SSC GD Constable across BSF, CRPF, CISF, ITBP, SSB & Assam Rifles.
+        </p>
+        <ul class="text-xs space-y-1.5 text-gray-300 font-mono mb-5">
+          <li>• UPSC CAPF AC (Graduate)</li>
+          <li>• SSC GD Constable (10th)</li>
+          <li>• Indian Coast Guard Navik</li>
+          <li>• Assam Rifles Tradesmen</li>
+        </ul>
+        <a href="/jobs?category=CAPF" class="text-xs font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 font-mono">
+          Explore CAPF Entries &rarr;
+        </a>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 3: RECENTLY ADDED PYQs & MOCK TESTS -->
+<section class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-[#1C2F22] gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-clock-rotate-left text-amber-400"></i>
+        <span>AUTHENTIC EXAMINATION SIMULATOR</span>
+      </div>
+      <h2 class="text-2xl sm:text-3xl font-bold font-['Chakra_Petch'] text-white" data-i18n="sec_pyq_papers">
+        Authentic PYQ Library & CBT Mocks
+      </h2>
+      <p class="text-sm text-gray-400 mt-1">Practice with authentic past year question sets and real-time marking schemes</p>
+    </div>
+    <div class="flex space-x-3">
+      <a href="/pyq" class="text-xs font-bold text-amber-400 hover:text-amber-300 font-mono bg-[#14261B] px-3.5 py-2 rounded border border-[#274732]">
+        All PYQ Papers &rarr;
+      </a>
+      <a href="/tests" class="text-xs font-bold text-emerald-400 hover:text-emerald-300 font-mono bg-[#14261B] px-3.5 py-2 rounded border border-[#274732]">
+        All Mock Tests &rarr;
+      </a>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for paper in recent_papers %}
+      <div class="military-card p-5 flex flex-col justify-between">
+        <div>
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2 py-0.5 rounded text-[11px] font-mono font-bold uppercase {% if paper.paper_type == 'PYQ' %}bg-amber-950 text-amber-400 border border-amber-600{% else %}bg-emerald-950 text-emerald-400 border border-emerald-600{% endif %}">
+              {{ paper.paper_type }} • {{ paper.year or 'Standard' }}
+            </span>
+            <span class="text-xs font-mono text-gray-400"><i class="fa-solid fa-clock text-gray-500"></i> {{ paper.duration_minutes }} Mins</span>
+          </div>
+
+          <h3 class="text-base font-bold text-white mb-2 leading-snug">
+            {{ paper.title }}
+          </h3>
+
+          <div class="text-xs text-gray-400 space-y-1 mb-4 font-mono">
+            <p>Subject: <span class="text-gray-200">{{ paper.subject }}</span></p>
+            <p>Questions: <span class="text-gray-200">{{ paper.total_questions }} Qs</span> | Max Marks: <span class="text-amber-400">{{ paper.max_marks }}</span></p>
+            <p>Marking Scheme: <span class="text-emerald-400">+{{ paper.marks_per_correct }}</span> / <span class="text-red-400">-{{ paper.negative_marks }}</span></p>
+          </div>
+        </div>
+
+        <div class="pt-4 border-t border-[#1C2F22] flex items-center justify-between gap-2">
+          <a href="/start-test/{{ paper.id }}" class="flex-1 btn-military-gold py-2 rounded text-center text-xs font-bold">
+            <i class="fa-solid fa-play text-[10px]"></i> Launch CBT Test
+          </a>
+          <a href="/download-paper-pdf/{{ paper.id }}" class="bg-[#172A1E] hover:bg-[#203A2A] text-gray-300 hover:text-white px-3 py-2 rounded border border-[#2D4D37] text-xs font-mono" title="Download Printable PDF">
+            <i class="fa-solid fa-file-pdf text-rose-400"></i> PDF
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+</section>
+
+<!-- SECTION 4: STUDENT SUCCESS DASHBOARD PREVIEW -->
+<section class="py-16 bg-[#08110B] border-y border-[#182C1F] px-4 sm:px-6 lg:px-8">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      
+      <div>
+        <div class="inline-flex items-center space-x-2 text-xs font-mono text-emerald-400 mb-2">
+          <i class="fa-solid fa-microchip"></i>
+          <span>ACTIONABLE PERFORMANCE DIAGNOSTICS</span>
+        </div>
+        <h2 class="text-3xl font-bold font-['Chakra_Petch'] text-white mb-4">
+          Pinpoint Your Weak Subjects, Chapters & Time Traps
+        </h2>
+        <p class="text-sm text-gray-300 leading-relaxed mb-6 font-light">
+          Unlike generic portals, Defence Path dynamically audits your CBT answers question-by-question. Calculate exact marks with negative marking, discover topics where accuracy falls below 50%, and receive targeted revision recommendations.
+        </p>
+
+        <div class="space-y-4 text-xs font-mono mb-8">
+          <div class="flex items-start gap-3 bg-[#111F16] p-3 rounded-lg border border-[#203A2A]">
+            <i class="fa-solid fa-circle-xmark text-rose-400 text-sm mt-0.5"></i>
+            <div>
+              <p class="font-bold text-rose-300">Weak Area Alert: Mathematics &raquo; Percentage (42% Accuracy)</p>
+              <p class="text-gray-400 text-[11px] mt-0.5 font-sans">Formula confusion detected in successive percentage changes. 2 targeted revision sets generated.</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3 bg-[#111F16] p-3 rounded-lg border border-[#203A2A]">
+            <i class="fa-solid fa-circle-check text-emerald-400 text-sm mt-0.5"></i>
+            <div>
+              <p class="font-bold text-emerald-300">Strong Pillar: General Awareness &raquo; Defence Commands (84% Accuracy)</p>
+              <p class="text-gray-400 text-[11px] mt-0.5 font-sans">Consistently fast response time (average 22 seconds per question).</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="/dashboard" class="btn-military-gold px-6 py-3 rounded-lg text-xs font-bold font-mono">
+            Access Cadet Dashboard Live &rarr;
+          </a>
+          <a href="/weakness-analysis" class="btn-military-outline px-5 py-3 rounded-lg text-xs font-bold font-mono">
+            View Analytics Methodology
+          </a>
+        </div>
+      </div>
+
+      <!-- Interactive Mock HUD Preview -->
+      <div class="bg-[#0C1711] border border-[#243D2D] rounded-xl p-6 shadow-2xl relative">
+        <div class="flex items-center justify-between border-b border-[#1C3224] pb-4 mb-5">
+          <div class="flex items-center space-x-3">
+            <div class="w-3 h-3 rounded-full bg-rose-500"></div>
+            <div class="w-3 h-3 rounded-full bg-amber-500"></div>
+            <div class="w-3 h-3 rounded-full bg-emerald-500"></div>
+            <span class="text-xs font-mono text-gray-400 ml-2">ASPIRANT_DIAGNOSTICS_V2.0</span>
+          </div>
+          <span class="badge-gold px-2 py-0.5 rounded text-[10px]">LIVE EVALUATION</span>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4 mb-5 text-center">
+          <div class="bg-[#122218] p-3 rounded border border-[#213B2A]">
+            <p class="text-xs text-gray-400 font-mono">Overall Accuracy</p>
+            <p class="text-2xl font-bold font-mono text-emerald-400 mt-1">75.0%</p>
+          </div>
+          <div class="bg-[#122218] p-3 rounded border border-[#213B2A]">
+            <p class="text-xs text-gray-400 font-mono">Total Attempted</p>
+            <p class="text-2xl font-bold font-mono text-amber-400 mt-1">Full CBT Set</p>
+          </div>
+        </div>
+
+        <!-- Diagnostic Bars -->
+        <div class="space-y-3 font-mono text-xs">
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-gray-300">Indian History & Heritage</span>
+              <span class="text-emerald-400 font-bold">100% (Strong)</span>
+            </div>
+            <div class="w-full bg-[#182C20] h-2 rounded-full overflow-hidden">
+              <div class="bg-emerald-500 h-full" style="width: 100%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-gray-300">Mathematics: Percentage</span>
+              <span class="text-rose-400 font-bold">0% (Needs Improvement)</span>
+            </div>
+            <div class="w-full bg-[#182C20] h-2 rounded-full overflow-hidden">
+              <div class="bg-rose-500 h-full" style="width: 10%"></div>
+            </div>
+          </div>
+
+          <div>
+            <div class="flex justify-between mb-1">
+              <span class="text-gray-300">Logical Reasoning: Number Series</span>
+              <span class="text-emerald-400 font-bold">100% (Strong)</span>
+            </div>
+            <div class="w-full bg-[#182C20] h-2 rounded-full overflow-hidden">
+              <div class="bg-emerald-500 h-full" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5: HOW DEFENCE PATH WORKS (4-STEP MILITARY COMMAND WORKFLOW) -->
+<section class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  <div class="text-center max-w-2xl mx-auto mb-12">
+    <div class="inline-flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+      <i class="fa-solid fa-list-check"></i>
+      <span>STRATEGIC PREPARATION PROTOCOL</span>
+    </div>
+    <h2 class="text-3xl font-bold font-['Chakra_Petch'] text-white" data-i18n="sec_how_it_works">
+      How Defence Path Works
+    </h2>
+    <p class="text-sm text-gray-400 mt-2">A structured 4-phase digital system from notification discovery to final exam readiness</p>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    
+    <div class="military-card p-6 relative">
+      <div class="text-3xl font-bold font-mono text-amber-400/30 absolute top-4 right-4">01</div>
+      <div class="w-10 h-10 rounded bg-[#172B1F] flex items-center justify-center text-amber-400 mb-4">
+        <i class="fa-solid fa-bullhorn text-lg"></i>
+      </div>
+      <h3 class="text-base font-bold text-white mb-2">Discover Notices</h3>
+      <p class="text-xs text-gray-400 leading-relaxed">
+        Track real-time verified recruitment notifications across Army, Navy, Air Force, Coast Guard and CAPF with direct official portal links.
+      </p>
+    </div>
+
+    <div class="military-card p-6 relative">
+      <div class="text-3xl font-bold font-mono text-amber-400/30 absolute top-4 right-4">02</div>
+      <div class="w-10 h-10 rounded bg-[#172B1F] flex items-center justify-center text-emerald-400 mb-4">
+        <i class="fa-solid fa-id-card-clip text-lg"></i>
+      </div>
+      <h3 class="text-base font-bold text-white mb-2">Verify Eligibility</h3>
+      <p class="text-xs text-gray-400 leading-relaxed">
+        Use the interactive eligibility checker to verify age cutoff dates, educational qualifications, and physical/medical parameters.
+      </p>
+    </div>
+
+    <div class="military-card p-6 relative">
+      <div class="text-3xl font-bold font-mono text-amber-400/30 absolute top-4 right-4">03</div>
+      <div class="w-10 h-10 rounded bg-[#172B1F] flex items-center justify-center text-blue-400 mb-4">
+        <i class="fa-solid fa-laptop-code text-lg"></i>
+      </div>
+      <h3 class="text-base font-bold text-white mb-2">Practice Real CBT</h3>
+      <p class="text-xs text-gray-400 leading-relaxed">
+        Attempt authentic Previous Year Papers and Mock tests on a professional Computer Based Test interface with question palettes and timers.
+      </p>
+    </div>
+
+    <div class="military-card p-6 relative">
+      <div class="text-3xl font-bold font-mono text-amber-400/30 absolute top-4 right-4">04</div>
+      <div class="w-10 h-10 rounded bg-[#172B1F] flex items-center justify-center text-purple-400 mb-4">
+        <i class="fa-solid fa-chart-pie text-lg"></i>
+      </div>
+      <h3 class="text-base font-bold text-white mb-2">Analyse & Conquer</h3>
+      <p class="text-xs text-gray-400 leading-relaxed">
+        Review step-by-step mathematical explanations, inspect weak topics, and track application deadlines seamlessly in your student dossier.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 6: FREQUENTLY ASKED QUESTIONS (FAQ) -->
+<section class="py-16 bg-[#09120D] border-y border-[#182B1F] px-4 sm:px-6 lg:px-8">
+  <div class="max-w-4xl mx-auto">
+    
+    <div class="text-center mb-10">
+      <div class="inline-flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+        <i class="fa-solid fa-circle-question"></i>
+        <span>ASPIRANT CLARIFICATIONS</span>
+      </div>
+      <h2 class="text-3xl font-bold font-['Chakra_Petch'] text-white" data-i18n="sec_faq">
+        Frequently Asked Questions
+      </h2>
+    </div>
+
+    <div class="space-y-4">
+      
+      <div class="bg-[#111F16] border border-[#213B2A] rounded-lg p-5">
+        <h4 class="text-sm font-bold text-white flex items-center justify-between cursor-pointer">
+          <span>Is Defence Path an official government recruitment website?</span>
+          <i class="fa-solid fa-chevron-down text-xs text-amber-400"></i>
+        </h4>
+        <p class="text-xs text-gray-300 mt-3 leading-relaxed">
+          No. Defence Path is an independent educational portal engineered to help aspirants discover authentic recruitment updates, understand complex eligibility criteria, and practice authentic PYQs and mock tests. All applications must be submitted directly through official government portals (such as joinindianarmy.nic.in, upsc.gov.in, ssc.gov.in).
+        </p>
+      </div>
+
+      <div class="bg-[#111F16] border border-[#213B2A] rounded-lg p-5">
+        <h4 class="text-sm font-bold text-white flex items-center justify-between cursor-pointer">
+          <span>Are the mock test marking schemes aligned with actual exams?</span>
+          <i class="fa-solid fa-chevron-down text-xs text-amber-400"></i>
+        </h4>
+        <p class="text-xs text-gray-300 mt-3 leading-relaxed">
+          Yes. Defence Path CBT engine calculates scores strictly in accordance with official examination patterns — including negative marking (e.g., -0.83 for NDA Mathematics, -0.33 for CDS, -0.5 for Agniveer GD, and -1.0 for AFCAT).
+        </p>
+      </div>
+
+      <div class="bg-[#111F16] border border-[#213B2A] rounded-lg p-5">
+        <h4 class="text-sm font-bold text-white flex items-center justify-between cursor-pointer">
+          <span>How does the weakness analysis work?</span>
+          <i class="fa-solid fa-chevron-down text-xs text-amber-400"></i>
+        </h4>
+        <p class="text-xs text-gray-300 mt-3 leading-relaxed">
+          The weakness analysis system evaluates your recorded test attempts from the database. It categorizes subjects, chapters, and topics based on your accuracy: Strong (> 70%), Practice Recommended (50% – 70%), and Needs Improvement (< 50%). It prevents false conclusions by checking for minimum attempt thresholds.
+        </p>
+      </div>
+
+      <div class="bg-[#111F16] border border-[#213B2A] rounded-lg p-5">
+        <h4 class="text-sm font-bold text-white flex items-center justify-between cursor-pointer">
+          <span>Can I access Defence Path in regional Indian languages?</span>
+          <i class="fa-solid fa-chevron-down text-xs text-amber-400"></i>
+        </h4>
+        <p class="text-xs text-gray-300 mt-3 leading-relaxed">
+          Yes. Defence Path supports 13 Indian languages: English, Hindi, Bengali, Marathi, Tamil, Telugu, Kannada, Malayalam, Gujarati, Punjabi, Odia, Assamese, and Urdu (with complete RTL orientation). Select your preferred language in the top navbar.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 7: DEVELOPER INTRODUCTION SPOTLIGHT -->
+<section class="py-16 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  <div class="bg-gradient-to-r from-[#0C1610] via-[#122419] to-[#0C1610] border border-[#264532] rounded-2xl p-8 lg:p-12 shadow-2xl relative overflow-hidden">
+    
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-center">
+      
+      <!-- Developer Image Column -->
+      <div class="text-center md:text-left flex flex-col items-center md:items-start">
+        <div class="relative group">
+          <div class="absolute -inset-1 bg-gradient-to-r from-amber-400 to-emerald-500 rounded-xl blur opacity-30 group-hover:opacity-70 transition duration-1000"></div>
+          <img src="/static/uploads/developer/prashant_image.jpeg" alt="Er. Prashant Mishra" class="relative w-48 h-60 object-cover rounded-xl border-2 border-amber-400 shadow-2xl">
+        </div>
+        <div class="mt-4 text-center md:text-left">
+          <span class="inline-block px-2.5 py-1 bg-amber-950 text-amber-400 border border-amber-600 rounded text-xs font-mono font-bold">
+            CHIEF ARCHITECT & DEVELOPER
+          </span>
+        </div>
+      </div>
+
+      <!-- Developer Dossier Information -->
+      <div class="md:col-span-2">
+        <div class="inline-flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+          <i class="fa-solid fa-code"></i>
+          <span>PROJECT DEVELOPER DOSSIER</span>
+        </div>
+
+        <h3 class="text-3xl font-extrabold text-white font-['Chakra_Petch'] mb-1">
+          Er. Prashant Mishra
+        </h3>
+        <p class="text-sm text-emerald-400 font-mono mb-4">Project Developer – DEFENCE PATH</p>
+
+        <p class="text-sm text-gray-300 leading-relaxed mb-6 font-light">
+          "DEFENCE PATH was conceived and architected with a singular mission: to provide every Indian defence aspirant with authentic recruitment data, a genuine computer-based testing environment, and precision performance diagnostics. Aspiring to wear the uniform requires unwavering discipline — and your preparation platform must match that military standard."
+        </p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono mb-6">
+          <div class="bg-[#0A130D] p-3 rounded border border-[#1E3325]">
+            <p class="text-gray-400">Direct Contact Number:</p>
+            <p class="text-emerald-400 font-bold text-sm mt-0.5"><i class="fa-solid fa-phone text-xs mr-1"></i> 6390314464</p>
+          </div>
+          <div class="bg-[#0A130D] p-3 rounded border border-[#1E3325]">
+            <p class="text-gray-400">Verified Email Status:</p>
+            <p class="text-gray-300 italic mt-0.5"><i class="fa-solid fa-envelope text-xs mr-1 text-amber-400"></i> Developer email will be available soon.</p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-4">
+          <a href="/contact" class="btn-military-gold px-5 py-2.5 rounded text-xs font-bold font-mono flex items-center gap-2">
+            <i class="fa-solid fa-paper-plane"></i> Contact Developer
+          </a>
+          <a href="/developer-profile" class="btn-military-outline px-5 py-2.5 rounded text-xs font-bold font-mono flex items-center gap-2">
+            <i class="fa-solid fa-user"></i> View Full Developer Profile
+          </a>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+</section>
+{% endblock %}

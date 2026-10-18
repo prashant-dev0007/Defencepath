@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Weakness Diagnostics & Performance Analytics – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <!-- Header Banner -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325]">
+    <div class="flex items-center space-x-2 text-xs font-mono text-rose-400 mb-2">
+      <i class="fa-solid fa-chart-line"></i>
+      <span>PRECISION PERFORMANCE AUDIT ENGINE</span>
+    </div>
+    <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+      Weakness Analysis & Revision Recommendations
+    </h1>
+    <p class="text-sm text-gray-400 mt-1 max-w-3xl">
+      Calculated from your verified CBT attempts. Evaluates subject-level accuracy, pinpoints weak topics with &lt;50% accuracy, and recommends surgical revision steps.
+    </p>
+  </div>
+
+  <!-- Analytics Visual Charts Row -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+    
+    <!-- Subject Accuracy Bar Chart -->
+    <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-6 shadow-xl">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#1C3224]">
+        <h3 class="text-sm font-bold font-mono uppercase tracking-wider text-amber-400">
+          Subject-wise Accuracy Benchmark (%)
+        </h3>
+        <span class="text-[11px] font-mono text-gray-400">Green &ge;70% | Red &lt;50%</span>
+      </div>
+      <div class="relative h-64">
+        <canvas id="subjectChartCanvas"></canvas>
+      </div>
+    </div>
+
+    <!-- Attempt Progress Line Chart -->
+    <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-6 shadow-xl">
+      <div class="flex items-center justify-between mb-4 pb-2 border-b border-[#1C3224]">
+        <h3 class="text-sm font-bold font-mono uppercase tracking-wider text-emerald-400">
+          Score Progression Over Time
+        </h3>
+        <span class="text-[11px] font-mono text-gray-400">Test Progression Curve</span>
+      </div>
+      <div class="relative h-64">
+        <canvas id="progressChartCanvas"></canvas>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Detailed Diagnostic Topic Status Cards -->
+  <div class="space-y-6 mb-10">
+    <div class="pb-2 border-b border-[#1E3325]">
+      <h3 class="text-xl font-bold font-['Chakra_Petch'] text-white">
+        Itemized Topic & Chapter Diagnosis
+      </h3>
+      <p class="text-xs text-gray-400 font-mono mt-0.5">Identifies topics where question accuracy falls below critical thresholds</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      
+      <!-- Weak Topics Column -->
+      <div class="bg-[#0C1610] border border-rose-500/40 rounded-xl p-5 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-rose-900/40 mb-4">
+          <div class="flex items-center space-x-2 text-rose-400">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <h4 class="font-bold font-mono text-xs uppercase tracking-wider">Needs Improvement (&lt; 50%)</h4>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950 text-rose-300">{{ weak_list|length }} Topics</span>
+        </div>
+
+        {% if weak_list %}
+          <div class="space-y-3">
+            {% for item in weak_list %}
+              <div class="bg-[#141C16] border border-rose-900/30 p-3 rounded-lg text-xs font-mono">
+                <div class="flex justify-between items-start mb-1">
+                  <span class="text-white font-bold">{{ item.topic }}</span>
+                  <span class="text-rose-400 font-bold">{{ item.accuracy }}%</span>
+                </div>
+                <p class="text-[11px] text-gray-400">Subject: {{ item.subject }} &bull; Attempted: {{ item.total }} Qs</p>
+                <div class="mt-2 pt-2 border-t border-[#1C2C20]">
+                  <a href="/tests" class="text-[10px] text-amber-400 hover:underline flex items-center gap-1">
+                    <i class="fa-solid fa-play text-[8px]"></i> Launch Targeted Practice &rarr;
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-xs text-gray-400 font-mono italic">No topics currently below 50% threshold.</p>
+        {% endif %}
+      </div>
+
+      <!-- Practice Recommended Column -->
+      <div class="bg-[#0C1610] border border-amber-500/40 rounded-xl p-5 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-amber-900/40 mb-4">
+          <div class="flex items-center space-x-2 text-amber-400">
+            <i class="fa-solid fa-wrench"></i>
+            <h4 class="font-bold font-mono text-xs uppercase tracking-wider">Practice Recommended (50-70%)</h4>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300">{{ practice_list|length }} Topics</span>
+        </div>
+
+        {% if practice_list %}
+          <div class="space-y-3">
+            {% for item in practice_list %}
+              <div class="bg-[#141C16] border border-amber-900/30 p-3 rounded-lg text-xs font-mono">
+                <div class="flex justify-between items-start mb-1">
+                  <span class="text-white font-bold">{{ item.topic }}</span>
+                  <span class="text-amber-400 font-bold">{{ item.accuracy }}%</span>
+                </div>
+                <p class="text-[11px] text-gray-400">Subject: {{ item.subject }} &bull; Attempted: {{ item.total }} Qs</p>
+                <div class="mt-2 pt-2 border-t border-[#1C2C20]">
+                  <a href="/pyq" class="text-[10px] text-amber-400 hover:underline flex items-center gap-1">
+                    <i class="fa-solid fa-book-open text-[8px]"></i> Solve PYQ Drills &rarr;
+                  </a>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-xs text-gray-400 font-mono italic">No topics in moderate accuracy bracket.</p>
+        {% endif %}
+      </div>
+
+      <!-- Strong Performance Column -->
+      <div class="bg-[#0C1610] border border-emerald-500/40 rounded-xl p-5 shadow-xl">
+        <div class="flex items-center justify-between pb-3 border-b border-emerald-900/40 mb-4">
+          <div class="flex items-center space-x-2 text-emerald-400">
+            <i class="fa-solid fa-circle-check"></i>
+            <h4 class="font-bold font-mono text-xs uppercase tracking-wider">Strong Command (&gt; 70%)</h4>
+          </div>
+          <span class="px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300">{{ strong_list|length }} Topics</span>
+        </div>
+
+        {% if strong_list %}
+          <div class="space-y-3">
+            {% for item in strong_list %}
+              <div class="bg-[#141C16] border border-emerald-900/30 p-3 rounded-lg text-xs font-mono">
+                <div class="flex justify-between items-start mb-1">
+                  <span class="text-white font-bold">{{ item.topic }}</span>
+                  <span class="text-emerald-400 font-bold">{{ item.accuracy }}%</span>
+                </div>
+                <p class="text-[11px] text-gray-400">Subject: {{ item.subject }} &bull; Attempted: {{ item.total }} Qs</p>
+                <p class="text-[10px] text-emerald-400 mt-2 pt-2 border-t border-[#1C2C20]">
+                  Status: High Accuracy & Speed Retained
+                </p>
+              </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="text-xs text-gray-400 font-mono italic">Complete full test papers to register strong pillars.</p>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="/static/js/analytics.js"></script>
+<script>
+  const subjectStatsData = {{ subject_stats_json | safe }};
+  const attemptsHistoryData = {{ attempts_history_json | safe }};
+
+  document.addEventListener('DOMContentLoaded', () => {
+    if (Object.keys(subjectStatsData).length > 0) {
+      renderSubjectChart('subjectChartCanvas', subjectStatsData);
+    }
+    if (attemptsHistoryData.length > 0) {
+      renderProgressChart('progressChartCanvas', attemptsHistoryData);
+    }
+  });
+</script>
+{% endblock %}

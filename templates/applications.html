@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}My Defence Application Tracker – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <!-- Header Banner -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-blue-400 mb-2">
+        <i class="fa-solid fa-clipboard-list"></i>
+        <span>PERSONAL APPLICATION REGISTRY</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Defence Application Tracker
+      </h1>
+      <p class="text-sm text-gray-400 mt-1 max-w-2xl">
+        Manage your official application forms, registration reference numbers, examination dates, admit card statuses, and personal preparation logs privately in your authenticated dossier.
+      </p>
+    </div>
+
+    <button onclick="openAddModal()" class="btn-military-gold px-5 py-2.5 rounded-lg text-xs font-bold font-mono flex items-center gap-2 shrink-0 shadow-lg">
+      <i class="fa-solid fa-plus"></i> Track New Application
+    </button>
+  </div>
+
+  <!-- Mandatory Security Note -->
+  <div class="bg-[#0C1610] border border-[#233C2B] p-4 rounded-xl text-xs text-gray-400 mb-8 flex items-start gap-3 font-mono">
+    <i class="fa-solid fa-lock text-emerald-400 text-base mt-0.5"></i>
+    <div>
+      <strong class="text-white">Privacy & Verification Assurance:</strong>
+      <p class="mt-0.5">
+        Application entries are strictly confidential to your account. Defence Path does not submit forms directly to government servers. Always ensure your official forms are completed on the respective recruitment portal.
+      </p>
+    </div>
+  </div>
+
+  <!-- Applications Table / Cards -->
+  {% if applications %}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for app in applications %}
+        <div class="military-card military-card-hud p-6 flex flex-col justify-between">
+          <div>
+            <!-- Status Badge & Date -->
+            <div class="flex items-center justify-between mb-3">
+              <span class="px-2.5 py-1 rounded text-[11px] font-mono font-bold uppercase
+                {% if app.status == 'Application Submitted' or app.status == 'Fee Paid' %}bg-blue-950 text-blue-300 border border-blue-600
+                {% elif app.status == 'Admit Card Available' %}bg-purple-950 text-purple-300 border border-purple-600 animate-pulse
+                {% elif app.status == 'Selected' %}bg-emerald-950 text-emerald-300 border border-emerald-500
+                {% elif app.status == 'Not Selected' %}bg-red-950 text-rose-300 border border-rose-600
+                {% else %}bg-amber-950 text-amber-300 border border-amber-600{% endif %}">
+                {{ app.status }}
+              </span>
+              <span class="text-[11px] font-mono text-gray-400">Applied: {{ app.application_date }}</span>
+            </div>
+
+            <h3 class="text-lg font-bold text-white mb-1 leading-snug">
+              {{ app.exam_name }}
+            </h3>
+            <p class="text-xs text-amber-400 font-mono mb-4">{{ app.organization }}</p>
+
+            <div class="space-y-1.5 text-xs font-mono text-gray-300 bg-[#0E1B13] p-3 rounded-lg border border-[#1E3425] mb-4">
+              <p>• Exam Date: <strong class="text-white">{{ app.exam_date or 'TBA' }}</strong></p>
+              <p>• Admit Card: <strong class="text-emerald-400">{{ app.admit_card_status }}</strong></p>
+              <p>• Reference No: <span class="text-amber-300 font-bold">{{ app.reference_number or 'N/A' }}</span></p>
+            </div>
+
+            {% if app.notes %}
+              <div class="text-xs text-gray-400 italic bg-[#0A130D] p-2.5 rounded border border-[#17271B] mb-4">
+                "{{ app.notes }}"
+              </div>
+            {% endif %}
+          </div>
+
+          <!-- Action Row -->
+          <div class="pt-4 border-t border-[#1F3325] flex items-center justify-between">
+            <button onclick='openEditModal({{ app | tojson }})' class="text-xs font-mono text-amber-400 hover:text-amber-300 font-bold flex items-center gap-1">
+              <i class="fa-solid fa-pen-to-square"></i> Edit Log
+            </button>
+            <form action="/my-applications/delete/{{ app.id }}" method="POST" onsubmit="return confirm('Are you sure you want to remove this tracked application?');">
+              <button type="submit" class="text-xs font-mono text-rose-400 hover:text-rose-300">
+                <i class="fa-solid fa-trash-can"></i> Delete
+              </button>
+            </form>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="bg-[#0C1610] border border-[#233C2B] rounded-xl p-12 text-center">
+      <i class="fa-solid fa-clipboard text-4xl text-gray-600 mb-3"></i>
+      <h3 class="text-lg font-bold text-white mb-1">No Applications Tracked Yet</h3>
+      <p class="text-xs text-gray-400 mb-5 max-w-sm mx-auto">Keep all your defence examination applications, roll numbers, and deadlines organized in one secure place.</p>
+      <button onclick="openAddModal()" class="btn-military-gold px-5 py-2.5 rounded text-xs font-bold font-mono">
+        Track Your First Application
+      </button>
+    </div>
+  {% endif %}
+
+  <!-- Add/Edit Application Modal -->
+  <div id="app-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0C1610] border border-[#233C2B] rounded-xl max-w-lg w-full p-6 shadow-2xl">
+      <div class="flex items-center justify-between pb-3 border-b border-[#1E3325] mb-4">
+        <h3 id="modal-title" class="text-base font-bold font-['Chakra_Petch'] text-white">Track Defence Application</h3>
+        <button onclick="closeAppModal()" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form id="app-form" method="POST" action="/my-applications/save" class="space-y-4 text-xs">
+        <input type="hidden" name="app_id" id="form-app-id">
+
+        <div>
+          <label class="block font-mono text-gray-300 mb-1">Examination Name <span class="text-rose-400">*</span></label>
+          <input type="text" name="exam_name" id="form-exam-name" placeholder="e.g. UPSC NDA & NA (I) 2026" required class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-mono text-gray-300 mb-1">Organization <span class="text-rose-400">*</span></label>
+            <input type="text" name="organization" id="form-organization" placeholder="e.g. UPSC, Indian Army" required class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block font-mono text-gray-300 mb-1">Application Date <span class="text-rose-400">*</span></label>
+            <input type="date" name="application_date" id="form-application-date" required class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-mono text-gray-300 mb-1">Application Status</label>
+            <select name="status" id="form-status" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+              <option value="Interested">Interested</option>
+              <option value="Not Applied">Not Applied</option>
+              <option value="Application Submitted">Application Submitted</option>
+              <option value="Fee Paid">Fee Paid</option>
+              <option value="Admit Card Available">Admit Card Available</option>
+              <option value="Examination Completed">Examination Completed</option>
+              <option value="Result Awaited">Result Awaited</option>
+              <option value="Selected">Selected</option>
+              <option value="Not Selected">Not Selected</option>
+            </select>
+          </div>
+          <div>
+            <label class="block font-mono text-gray-300 mb-1">Exam Date (Estimated / Declared)</label>
+            <input type="date" name="exam_date" id="form-exam-date" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block font-mono text-gray-300 mb-1">Registration / Roll No.</label>
+            <input type="text" name="reference_number" id="form-reference-number" placeholder="Optional" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block font-mono text-gray-300 mb-1">Admit Card Status</label>
+            <select name="admit_card_status" id="form-admit-card-status" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+              <option value="Not Released">Not Released</option>
+              <option value="Expected Soon">Expected Soon</option>
+              <option value="Available for Download">Available for Download</option>
+              <option value="Downloaded">Downloaded & Printed</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label class="block font-mono text-gray-300 mb-1">Personal Preparation Notes</label>
+          <textarea name="notes" id="form-notes" rows="2" placeholder="e.g. Focus on Trigonometry PYQs, running pace 5m 20s" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400"></textarea>
+        </div>
+
+        <div class="flex items-center space-x-3 pt-3 border-t border-[#1E3325]">
+          <button type="button" onclick="closeAppModal()" class="flex-1 bg-[#16271D] text-gray-300 py-2 rounded font-mono border border-[#284934]">Cancel</button>
+          <button type="submit" class="flex-1 btn-military-gold py-2 rounded font-bold font-mono">Save to Tracker</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  function openAddModal() {
+    document.getElementById('modal-title').textContent = "Track New Application";
+    document.getElementById('form-app-id').value = "";
+    document.getElementById('form-exam-name').value = "";
+    document.getElementById('form-organization').value = "";
+    document.getElementById('form-application-date').value = new Date().toISOString().split('T')[0];
+    document.getElementById('form-status').value = "Application Submitted";
+    document.getElementById('form-exam-date').value = "";
+    document.getElementById('form-reference-number').value = "";
+    document.getElementById('form-admit-card-status').value = "Not Released";
+    document.getElementById('form-notes').value = "";
+    document.getElementById('app-modal').classList.remove('hidden');
+  }
+
+  function openEditModal(app) {
+    document.getElementById('modal-title').textContent = "Edit Application Record";
+    document.getElementById('form-app-id').value = app.id;
+    document.getElementById('form-exam-name').value = app.exam_name;
+    document.getElementById('form-organization').value = app.organization;
+    document.getElementById('form-application-date').value = app.application_date;
+    document.getElementById('form-status').value = app.status;
+    document.getElementById('form-exam-date').value = app.exam_date || "";
+    document.getElementById('form-reference-number').value = app.reference_number || "";
+    document.getElementById('form-admit-card-status').value = app.admit_card_status || "Not Released";
+    document.getElementById('form-notes').value = app.notes || "";
+    document.getElementById('app-modal').classList.remove('hidden');
+  }
+
+  function closeAppModal() {
+    document.getElementById('app-modal').classList.add('hidden');
+  }
+</script>
+{% endblock %}

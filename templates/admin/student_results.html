@@ -1,0 +1,185 @@
+{% extends "base.html" %}
+
+{% block title %}Student Examination Results & Analytics – Admin – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <!-- Header Bar -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-emerald-400 mb-2">
+        <i class="fa-solid fa-chart-column"></i>
+        <span>EXAMINATION PERFORMANCE AUDIT CONSOLE</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Student Results & Test Records
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-1">
+        Inspect complete attempt logs, marks obtained, negative marking penalties, and detailed audits across all registered candidates.
+      </p>
+    </div>
+
+    <!-- Quick Navigation to Admin Modules -->
+    <div class="flex flex-wrap gap-2 text-xs font-mono">
+      <a href="/admin" class="bg-[#16271D] hover:bg-[#203D2B] text-gray-200 border border-[#2B4E38] px-3 py-1.5 rounded transition-all">
+        <i class="fa-solid fa-arrow-left mr-1"></i> Dashboard
+      </a>
+      <a href="/admin/users" class="bg-[#16271D] hover:bg-[#203D2B] text-blue-300 border border-[#2B4E38] px-3 py-1.5 rounded transition-all">
+        <i class="fa-solid fa-users mr-1"></i> Cadets
+    </div>
+  </div>
+
+  <!-- Search & Filter Controls -->
+  <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-4 mb-6 shadow-xl">
+    <form method="GET" action="/admin/student-results" class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs font-mono">
+      
+      <!-- Text Search -->
+      <div class="sm:col-span-5">
+        <label class="block text-gray-400 mb-1">Search Candidate / Exam</label>
+        <div class="relative">
+          <input type="text" name="q" value="{{ search_q }}" placeholder="Search by student name, username, or test title..."
+                 class="w-full bg-[#122218] border border-[#2B4E38] rounded-lg px-3 py-2 text-white placeholder-gray-500 focus:outline-none focus:border-amber-400">
+        </div>
+      </div>
+
+      <!-- Test Paper Filter -->
+      <div class="sm:col-span-4">
+        <label class="block text-gray-400 mb-1">Filter by Examination Paper</label>
+        <select name="paper_id" class="w-full bg-[#122218] border border-[#2B4E38] rounded-lg px-3 py-2 text-white focus:outline-none focus:border-amber-400">
+          <option value="">All Examination Papers ({{ all_papers|length }})</option>
+          {% for p in all_papers %}
+            <option value="{{ p.id }}" {% if selected_paper == p.id|string %}selected{% endif %}>
+              [{{ p.exam_code }}] {{ p.title }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="sm:col-span-3 flex items-end gap-2">
+        <button type="submit" class="flex-1 btn-military-gold py-2 rounded-lg font-bold text-xs font-mono shadow">
+          <i class="fa-solid fa-filter mr-1"></i> Apply Filter
+        </button>
+        {% if search_q or selected_paper or selected_student %}
+          <a href="/admin/student-results" class="bg-[#1A261D] hover:bg-[#253A2A] text-gray-300 border border-[#2B4E38] px-3 py-2 rounded-lg font-mono text-xs" title="Clear Filters">
+            <i class="fa-solid fa-rotate-left"></i>
+          </a>
+        {% endif %}
+      </div>
+    </form>
+  </div>
+
+  <!-- Results Summary Counter -->
+  <div class="flex items-center justify-between text-xs font-mono mb-3 px-1 text-gray-400">
+    <span>Showing <strong>{{ results|length }}</strong> verified examination attempts</span>
+    <span class="text-amber-400"><i class="fa-solid fa-shield-halved mr-1"></i> Admin Authorization Active</span>
+  </div>
+
+  <!-- Detailed Results Table -->
+  <div class="bg-[#0C1610] border border-[#22392A] rounded-xl overflow-hidden shadow-2xl">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs font-mono">
+        <thead class="bg-[#112016] text-amber-400 border-b border-[#1E3626]">
+          <tr>
+            <th class="p-3">Student & ID</th>
+            <th class="p-3">Examination Paper</th>
+            <th class="p-3">Score & Marks</th>
+            <th class="p-3">Accuracy</th>
+            <th class="p-3">Breakdown (C / W / U)</th>
+            <th class="p-3">Duration</th>
+            <th class="p-3">Attempt Date</th>
+            <th class="p-3 text-center">Audit Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#182C1F]">
+          {% if results %}
+            {% for r in results %}
+              <tr class="hover:bg-[#122218] transition-colors">
+                
+                <!-- Student Identification -->
+                <td class="p-3">
+                  <div>
+                    <strong class="text-white text-sm block">{{ r.full_name }}</strong>
+                    <span class="text-amber-400 text-[11px]">@{{ r.username }}</span>
+                    <span class="text-gray-500 text-[10px] block">ID: #STU-00{{ r.user_id }}</span>
+                  </div>
+                </td>
+
+                <!-- Exam / Paper Details -->
+                <td class="p-3">
+                  <div>
+                    <span class="text-white font-bold block">{{ r.paper_title }}</span>
+                    <span class="bg-[#14261B] text-emerald-400 border border-[#244530] px-1.5 py-0.5 rounded text-[10px] inline-block mt-0.5">
+                      {{ r.exam_code }} &bull; {{ r.paper_type }} ({{ r.subject }})
+                    </span>
+                  </div>
+                </td>
+
+                <!-- Score Obtained -->
+                <td class="p-3">
+                  <div>
+                    <span class="text-base font-bold {% if r.score >= (r.max_marks * 0.5) %}text-emerald-400{% else %}text-amber-400{% endif %}">
+                      {{ r.score }}
+                    </span>
+                    <span class="text-gray-400 text-xs">/ {{ r.max_marks }} M</span>
+                  </div>
+                </td>
+
+                <!-- Accuracy Percentage -->
+                <td class="p-3">
+                  <div class="flex items-center space-x-2">
+                    <span class="font-bold {% if r.accuracy_percent >= 70 %}text-emerald-400{% elif r.accuracy_percent >= 50 %}text-amber-300{% else %}text-rose-400{% endif %}">
+                      {{ r.accuracy_percent }}%
+                    </span>
+                  </div>
+                </td>
+
+                <!-- Breakdown: Correct / Incorrect / Unattempted -->
+                <td class="p-3">
+                  <div class="space-x-1.5 text-[11px]">
+                    <span class="text-emerald-400 font-bold" title="Correct Answers"><i class="fa-solid fa-check text-[10px]"></i> {{ r.correct_count }}</span>
+                    <span class="text-gray-600">|</span>
+                    <span class="text-rose-400 font-bold" title="Incorrect Answers"><i class="fa-solid fa-xmark text-[10px]"></i> {{ r.incorrect_count }}</span>
+                    <span class="text-gray-600">|</span>
+                    <span class="text-gray-400" title="Unattempted"><i class="fa-solid fa-minus text-[10px]"></i> {{ r.unattempted_count }}</span>
+                  </div>
+                </td>
+
+                <!-- Duration -->
+                <td class="p-3 text-gray-300">
+                  {% set mins = (r.time_taken_seconds // 60) %}
+                  {% set secs = (r.time_taken_seconds % 60) %}
+                  {{ mins }}m {{ secs }}s
+                </td>
+
+                <!-- Date & Time -->
+                <td class="p-3 text-gray-400 text-[11px]">
+                  {{ r.attempt_date }}
+                </td>
+
+                <!-- Inspect Detailed Audit Link -->
+                <td class="p-3 text-center">
+                  <a href="/test-result/{{ r.id }}" target="_blank"
+                     class="bg-[#172E20] hover:bg-[#21432E] text-emerald-300 border border-[#2B4E38] px-2.5 py-1.5 rounded text-[11px] font-bold transition-all inline-flex items-center gap-1 shadow"
+                     title="Inspect candidate's full test submission, answers, and explanations">
+                    <i class="fa-solid fa-magnifying-glass text-[10px]"></i> Inspect Audit
+                  </a>
+                </td>
+
+              </tr>
+            {% endfor %}
+          {% else %}
+            <tr>
+              <td colspan="8" class="p-8 text-center text-gray-400 font-mono italic">
+                No examination attempts matching the selected criteria.
+              </td>
+            </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+{% endblock %}

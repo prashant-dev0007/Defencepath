@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Administrator Command Authentication – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-16 px-4 sm:px-6 lg:px-8 max-w-lg mx-auto">
+  
+  <div class="text-center mb-8">
+    <div class="w-14 h-14 rounded-2xl bg-amber-400 mx-auto flex items-center justify-center text-black font-extrabold text-2xl mb-3 shadow-xl shadow-amber-950/40 border-2 border-amber-300">
+      <i class="fa-solid fa-user-shield"></i>
+    </div>
+    <span class="text-xs font-mono text-amber-400 uppercase tracking-widest bg-amber-950/80 px-3 py-1 rounded-full border border-amber-600/50">
+      RESTRICTED ACCESS &bull; COMMAND PERSONNEL ONLY
+    </span>
+    <h1 class="text-2xl sm:text-3xl font-extrabold font-['Chakra_Petch'] text-white mt-3">
+      Admin Command Gateway
+    </h1>
+    <p class="text-xs text-gray-400 font-mono mt-1">
+      Authorized Administrator Access &bull; DEFENCE PATH Portal
+    </p>
+  </div>
+
+  <div class="bg-[#0C1610] border-2 border-amber-500/60 rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+    <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 pb-3 mb-5 border-b border-[#1F3627]">
+      <i class="fa-solid fa-lock"></i>
+      <span>SECURE ADMINISTRATIVE CREDENTIAL VERIFICATION</span>
+    </div>
+
+    <form method="POST" action="/admin/login" class="space-y-4 text-xs font-mono">
+      <div>
+        <label class="block text-gray-300 mb-1.5 font-bold">
+          Administrator Registered Email (Login Username) <span class="text-amber-400">*</span>
+        </label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <i class="fa-solid fa-envelope"></i>
+          </span>
+          <input type="text" name="username" required placeholder="admin@defencepath.in" autofocus
+                 class="w-full bg-[#122218] border border-[#2B4E38] rounded-lg pl-9 pr-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all">
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between mb-1.5 font-bold">
+          <label class="block text-gray-300">
+            Master Security Password <span class="text-amber-400">*</span>
+          </label>
+          <a href="/forgot-password?role=admin" class="text-[11px] text-amber-400 hover:text-amber-300 font-normal transition-colors">
+            Forgot Password?
+          </a>
+        </div>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <i class="fa-solid fa-key"></i>
+          </span>
+          <input type="password" name="password" required placeholder="••••••••"
+                 class="w-full bg-[#122218] border border-[#2B4E38] rounded-lg pl-9 pr-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all">
+        </div>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black py-3 rounded-lg font-bold font-mono tracking-wider shadow-xl transition-all flex items-center justify-center gap-2">
+          <i class="fa-solid fa-unlock-keyhole"></i> Verify & Access Command Console
+        </button>
+      </div>
+
+      <div class="pt-2 text-center">
+        <a href="/admin/setup" class="text-xs text-amber-400/90 hover:text-amber-300 transition-colors inline-flex items-center gap-1.5">
+          <i class="fa-solid fa-user-shield text-[10px]"></i> First-Time Administrator Setup? Initialize Password &rarr;
+        </a>
+      </div>
+
+      <div class="pt-4 border-t border-[#1C3224] text-center">
+        <a href="/login" class="text-xs text-gray-400 hover:text-emerald-400 transition-colors">
+          &larr; Switch to Cadet / Student Login Gateway
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <div class="text-center mt-6 text-xs text-gray-500 font-mono">
+    Protected by server-side rate limiting, session regeneration, and role-based access control.
+  </div>
+
+</section>
+{% endblock %}

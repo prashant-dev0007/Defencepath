@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}Strategic Study Planner – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
+  
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-purple-400 mb-2">
+        <i class="fa-solid fa-calendar-check"></i>
+        <span>CADET DAILY TARGETS</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Strategic Study Planner
+      </h1>
+      <p class="text-sm text-gray-400 mt-1 max-w-xl">
+        Schedule your daily chapter targets, physical drills, and mock test milestones with disciplined execution.
+      </p>
+    </div>
+
+    <!-- Add Task Form Toggle or Direct Form -->
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
+    
+    <!-- Add Task Form (4 cols) -->
+    <div class="md:col-span-5 bg-[#0C1610] border border-[#233C2B] rounded-xl p-6 shadow-xl">
+      <h3 class="text-sm font-bold font-mono uppercase tracking-wider text-amber-400 mb-4 pb-2 border-b border-[#1C3224]">
+        Add New Study Milestone
+      </h3>
+
+      <form method="POST" action="/study-planner/add" class="space-y-4 text-xs font-mono">
+        <div>
+          <label class="block text-gray-300 mb-1">Milestone Title <span class="text-rose-400">*</span></label>
+          <input type="text" name="title" required placeholder="e.g. Solve 50 NDA Trigonometry PYQs" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Subject / Domain</label>
+          <input type="text" name="subject" required placeholder="e.g. Mathematics, Physical Fitness" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Target Completion Date</label>
+          <input type="date" name="target_date" required class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Priority Level</label>
+          <select name="priority" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+            <option value="High">High Priority</option>
+            <option value="Medium" selected>Medium Priority</option>
+            <option value="Low">Low Priority</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full btn-military-gold py-2 rounded text-xs font-bold font-mono">
+          <i class="fa-solid fa-plus"></i> Add Milestone
+        </button>
+      </form>
+    </div>
+
+    <!-- Tasks List (7 cols) -->
+    <div class="md:col-span-7 space-y-4">
+      <h3 class="text-sm font-bold font-mono uppercase tracking-wider text-emerald-400 mb-4 pb-2 border-b border-[#1C3224]">
+        Active Study Milestones ({{ tasks|length }})
+      </h3>
+
+      {% if tasks %}
+        <div class="space-y-3">
+          {% for t in tasks %}
+            <div class="bg-[#0C1610] border border-[#203627] p-4 rounded-xl flex items-center justify-between gap-4 shadow">
+              <div class="flex items-start space-x-3">
+                <form action="/study-planner/toggle/{{ t.id }}" method="POST" class="mt-0.5">
+                  <button type="submit" title="Toggle Completion">
+                    <i class="fa-solid {% if t.is_completed %}fa-circle-check text-emerald-400 text-lg{% else %}fa-circle text-gray-600 hover:text-amber-400 text-lg{% endif %}"></i>
+                  </button>
+                </form>
+
+                <div>
+                  <h4 class="text-sm font-bold {% if t.is_completed %}line-through text-gray-500{% else %}text-white{% endif %}">
+                    {{ t.title }}
+                  </h4>
+                  <div class="flex items-center space-x-3 text-xs font-mono text-gray-400 mt-1">
+                    <span>Subject: <strong class="text-gray-300">{{ t.subject }}</strong></span>
+                    <span>&bull;</span>
+                    <span class="text-amber-300">Due: {{ t.target_date }}</span>
+                    <span>&bull;</span>
+                    <span class="px-1.5 py-0.2 rounded text-[10px] font-bold uppercase {% if t.priority == 'High' %}bg-rose-950 text-rose-300{% elif t.priority == 'Medium' %}bg-amber-950 text-amber-300{% else %}bg-blue-950 text-blue-300{% endif %}">
+                      {{ t.priority }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <form action="/study-planner/delete/{{ t.id }}" method="POST" onsubmit="return confirm('Delete this study milestone?');">
+                <button type="submit" class="text-gray-500 hover:text-rose-400 p-2 text-xs">
+                  <i class="fa-solid fa-trash-can"></i>
+                </button>
+              </form>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="bg-[#0C1610] border border-[#203627] p-8 text-center rounded-xl">
+          <p class="text-xs text-gray-400 font-mono">No active milestones. Add your target tasks on the left.</p>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+
+</section>
+{% endblock %}

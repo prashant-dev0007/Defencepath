@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+
+{% block title %}Defence Examinations Master – Admin – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-emerald-400 mb-2">
+        <i class="fa-solid fa-graduation-cap"></i>
+        <span>ARMED FORCES ENTRY & EXAMINATIONS REGISTRY</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        Defence Examinations Master CMS
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-1">
+        Configure official defence entries, age limits, educational qualifications, physical requirements, and marking schemes.
+      </p>
+    </div>
+
+    <button onclick="document.getElementById('add-exam-modal').classList.remove('hidden')" class="btn-military-gold px-5 py-2.5 rounded-lg text-xs font-bold font-mono flex items-center gap-2">
+      <i class="fa-solid fa-plus"></i> Add New Defence Examination
+    </button>
+  </div>
+
+  <!-- Exams List Table -->
+  <div class="bg-[#0C1610] border border-[#22392A] rounded-xl overflow-hidden shadow-2xl">
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs font-mono">
+        <thead class="bg-[#112016] text-gray-300 border-b border-[#1E3626]">
+          <tr>
+            <th class="p-3">Code & Name</th>
+            <th class="p-3">Organization</th>
+            <th class="p-3">Category</th>
+            <th class="p-3">Age Bracket</th>
+            <th class="p-3">Educational Criteria</th>
+            <th class="p-3">Official Gateway</th>
+            <th class="p-3">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#182C1F]">
+          {% for e in exams %}
+            <tr class="hover:bg-[#122218] transition-colors">
+              <td class="p-3">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-950 text-amber-300 border border-amber-600 inline-block mb-1">
+                  {{ e.code }}
+                </span>
+                <strong class="text-white block text-sm">{{ e.name }}</strong>
+              </td>
+              <td class="p-3 text-gray-300">{{ e.organization }}</td>
+              <td class="p-3 text-emerald-400">{{ e.category }}</td>
+              <td class="p-3 text-amber-300 font-bold">{{ e.min_age }} – {{ e.max_age }} Yrs</td>
+              <td class="p-3 text-gray-300 truncate max-w-xs" title="{{ e.educational_qualification }}">
+                {{ e.educational_qualification }}
+              </td>
+              <td class="p-3">
+                <a href="{{ e.official_portal_url }}" target="_blank" class="text-gray-400 hover:text-white" title="Open Official Portal">
+                  <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                </a>
+              </td>
+              <td class="p-3">
+                <a href="/exams/{{ e.code }}" target="_blank" class="text-amber-400 hover:underline mr-2" title="Public View">
+                  View Syllabus &rarr;
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add Exam Modal -->
+  <div id="add-exam-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0C1610] border border-[#233C2B] rounded-xl max-w-2xl w-full p-6 shadow-2xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between pb-3 border-b border-[#1E3325] mb-4">
+        <h3 class="text-base font-bold font-['Chakra_Petch'] text-white">Register New Defence Examination</h3>
+        <button onclick="document.getElementById('add-exam-modal').classList.add('hidden')" class="text-gray-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+
+      <form method="POST" action="/admin/exams/add" class="space-y-4 text-xs font-mono">
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 mb-1">Exam Short Code <span class="text-rose-400">*</span></label>
+            <input type="text" name="code" required placeholder="e.g. INET, ICG DB" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Full Examination Name <span class="text-rose-400">*</span></label>
+            <input type="text" name="name" required placeholder="e.g. Indian Navy Entrance Test" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 mb-1">Recruiting Organization <span class="text-rose-400">*</span></label>
+            <input type="text" name="organization" required placeholder="e.g. Indian Navy, UPSC" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Category <span class="text-rose-400">*</span></label>
+            <select name="category" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+              <option value="Army">Indian Army</option>
+              <option value="Navy">Indian Navy</option>
+              <option value="Air Force">Indian Air Force</option>
+              <option value="Coast Guard">Indian Coast Guard</option>
+              <option value="CAPF">CAPF & Paramilitary</option>
+              <option value="Tri-Services">Tri-Services</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-gray-300 mb-1">Minimum Age Limit <span class="text-rose-400">*</span></label>
+            <input type="number" step="0.5" name="min_age" required value="17.5" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+          </div>
+          <div>
+            <label class="block text-gray-300 mb-1">Maximum Age Limit <span class="text-rose-400">*</span></label>
+            <input type="number" step="0.5" name="max_age" required value="21.0" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Educational Qualification <span class="text-rose-400">*</span></label>
+          <input type="text" name="educational_qualification" required placeholder="e.g. 10+2 with PCM minimum 60% aggregate" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Official Portal URL</label>
+          <input type="url" name="official_portal_url" placeholder="https://joinindiannavy.gov.in" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Overview Description</label>
+          <textarea name="description" rows="2" required placeholder="Concise summary of examination entry and role..." class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white"></textarea>
+        </div>
+
+        <div class="pt-3 border-t border-[#1E3325] flex justify-end gap-2">
+          <button type="button" onclick="document.getElementById('add-exam-modal').classList.add('hidden')" class="bg-[#15251B] text-gray-300 px-4 py-2 rounded">Cancel</button>
+          <button type="submit" class="btn-military-gold px-6 py-2 rounded font-bold font-mono">Create Exam Record</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</section>
+{% endblock %}

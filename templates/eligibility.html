@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+
+{% block title %}Exam Eligibility Checker – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+  
+  <!-- Header Banner -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325]">
+    <div class="flex items-center space-x-2 text-xs font-mono text-emerald-400 mb-2">
+      <i class="fa-solid fa-user-check"></i>
+      <span>PRECISION ELIGIBILITY AUDIT</span>
+    </div>
+    <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+      Defence Examination Eligibility Checker
+    </h1>
+    <p class="text-sm text-gray-400 mt-1 max-w-3xl">
+      Evaluate your date of birth, academic stream, gender, category, and physical parameters against official Gazetted recruitment criteria for Indian defence entries.
+    </p>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+    
+    <!-- Left Column: Interactive Form (5 cols) -->
+    <div class="lg:col-span-5 bg-[#0C1610] border border-[#233D2C] rounded-xl p-6 shadow-xl">
+      <h2 class="text-base font-bold font-['Chakra_Petch'] text-white mb-4 pb-3 border-b border-[#1E3325] flex items-center gap-2">
+        <i class="fa-solid fa-sliders text-amber-400"></i> Enter Your Parameters
+      </h2>
+
+      <form id="eligibility-form" class="space-y-4">
+        
+        <!-- Target Examination -->
+        <div>
+          <label class="block text-xs font-mono text-gray-300 mb-1">Target Examination <span class="text-rose-400">*</span></label>
+          <select id="exam-select" class="w-full bg-[#122218] border border-[#264230] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400" required>
+            <option value="">Select Defence Examination</option>
+            {% for ex in exams %}
+              <option value="{{ ex.code }}" data-min-age="{{ ex.min_age }}" data-max-age="{{ ex.max_age }}">{{ ex.name }} ({{ ex.organization }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Date of Birth -->
+        <div>
+          <label class="block text-xs font-mono text-gray-300 mb-1">Date of Birth <span class="text-rose-400">*</span></label>
+          <input type="date" id="dob-input" class="w-full bg-[#122218] border border-[#264230] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400" required>
+        </div>
+
+        <!-- Gender & Marital Status -->
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-mono text-gray-300 mb-1">Gender</label>
+            <select id="gender-select" class="w-full bg-[#122218] border border-[#264230] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+              <option value="Male">Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-mono text-gray-300 mb-1">Marital Status</label>
+            <select id="marital-select" class="w-full bg-[#122218] border border-[#264230] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+              <option value="Unmarried">Unmarried</option>
+              <option value="Married">Married</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Social Category -->
+        <div>
+          <label class="block text-xs font-mono text-gray-300 mb-1">Social Category</label>
+          <select id="category-select" class="w-full bg-[#122218] border border-[#264230] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+            <option value="General">General / EWS (Unreserved)</option>
+            <option value="OBC">OBC (Other Backward Classes)</option>
+            <option value="SC">SC (Scheduled Caste)</option>
+            <option value="ST">ST (Scheduled Tribe)</option>
+          </select>
+        </div>
+
+        <!-- Highest Educational Qualification -->
+        <div>
+          <label class="block text-xs font-mono text-gray-300 mb-1">Highest Qualification Passed / Appearing</label>
+          <select id="edu-select" class="w-full bg-[#122218] border border-[#264230] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+            <option value="10th">Class 10th / Matriculation</option>
+            <option value="12th_PCM">Class 12th (Physics, Chemistry, Maths)</option>
+            <option value="12th_Other">Class 12th (Arts / Commerce / Biology)</option>
+            <option value="Graduate_Any">Graduation Degree (BA / B.Com / B.Sc / Any)</option>
+            <option value="Graduate_Engg">B.E. / B.Tech Engineering Degree</option>
+          </select>
+        </div>
+
+        <!-- Percentage in Key Qualification -->
+        <div>
+          <label class="block text-xs font-mono text-gray-300 mb-1">Aggregate Marks Percentage (%)</label>
+          <input type="number" id="percentage-input" min="30" max="100" step="0.1" value="65.0" class="w-full bg-[#122218] border border-[#264230] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <!-- Height in cm -->
+        <div>
+          <label class="block text-xs font-mono text-gray-300 mb-1">Height (in cm)</label>
+          <input type="number" id="height-input" min="140" max="210" value="170" class="w-full bg-[#122218] border border-[#264230] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <button type="button" id="btn-run-check" class="w-full btn-military-gold py-2.5 rounded-lg text-xs font-bold font-mono tracking-wider">
+          <i class="fa-solid fa-calculator"></i> Run Eligibility Audit
+        </button>
+
+      </form>
+    </div>
+
+    <!-- Right Column: Audit Results & Breakdown (7 cols) -->
+    <div class="lg:col-span-7 space-y-6">
+      
+      <!-- Initial Placeholder State -->
+      <div id="eligibility-placeholder" class="bg-[#0C1610] border border-[#233D2C] rounded-xl p-8 text-center h-full flex flex-col justify-center items-center">
+        <div class="w-16 h-16 rounded-full bg-[#122419] border border-[#254A34] flex items-center justify-center text-amber-400 text-2xl mb-4">
+          <i class="fa-solid fa-clipboard-check"></i>
+        </div>
+        <h3 class="text-lg font-bold text-white mb-2">Ready for Examination Audit</h3>
+        <p class="text-xs text-gray-400 max-w-md leading-relaxed">
+          Select an official defence examination and your personal credentials on the left, then click <strong>"Run Eligibility Audit"</strong> to generate your itemized criteria breakdown.
+        </p>
+      </div>
+
+      <!-- Live Evaluation Result Box (Hidden initially) -->
+      <div id="eligibility-results" class="hidden space-y-5">
+        
+        <!-- Overall Status Banner -->
+        <div id="status-banner" class="p-5 rounded-xl border flex items-center justify-between">
+          <div>
+            <span class="text-[10px] font-mono uppercase tracking-widest block text-gray-300">OVERALL VERDICT</span>
+            <h3 id="verdict-title" class="text-2xl font-extrabold font-['Chakra_Petch']">ELIGIBLE</h3>
+            <p id="verdict-desc" class="text-xs mt-1 font-mono"></p>
+          </div>
+          <div id="verdict-icon" class="text-4xl"></div>
+        </div>
+
+        <!-- Detailed Checklist Breakdown -->
+        <div class="bg-[#0D1812] border border-[#21382A] rounded-xl p-5 shadow-lg">
+          <h4 class="text-xs font-bold font-mono uppercase tracking-wider text-amber-400 mb-4 pb-2 border-b border-[#1E3325]">
+            Itemized Criteria Evaluation Checklist
+          </h4>
+
+          <div class="space-y-3 text-xs" id="criteria-checklist">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+
+        <!-- Physical & Selection Stages info -->
+        <div class="bg-[#0D1812] border border-[#21382A] rounded-xl p-5 shadow-lg">
+          <h4 class="text-xs font-bold font-mono uppercase tracking-wider text-emerald-400 mb-3 pb-2 border-b border-[#1E3325]">
+            Physical Standards & Recruitment Stages
+          </h4>
+          <div id="exam-standards-content" class="text-xs text-gray-300 space-y-2 leading-relaxed"></div>
+        </div>
+
+        <!-- Official Disclaimer -->
+        <div class="bg-amber-950/30 border border-amber-500/40 p-4 rounded-lg text-[11px] text-amber-200 leading-relaxed font-mono">
+          <strong>Official Note:</strong> Eligibility results are preliminary guidance only. The official recruitment notification and recruiting authority determine final eligibility.
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Defence Exams Master Data in JavaScript for Instant Client Evaluation
+const examSpecs = {
+  "NDA": {
+    name: "National Defence Academy (NDA)",
+    minAge: 16.5,
+    maxAge: 19.5,
+    reqGender: "Both (Male & Female)",
+    marital: "Unmarried",
+    minEdu: ["12th_PCM", "12th_Other", "Graduate_Any", "Graduate_Engg"],
+    minPercentage: 0,
+    minHeightMale: 157,
+    minHeightFemale: 152,
+    physicalText: "Height: 157 cm (162.5 cm for Air Force Flying). 2.4 Km run in 15 mins, skipping, push-ups and chin-ups.",
+    stagesText: "Written Exam (Maths 300m + GAT 600m) -> 5-Day SSB Interview (900m) -> Medical Board."
+  },
+  "CDS": {
+    name: "Combined Defence Services (CDS)",
+    minAge: 19.0,
+    maxAge: 25.0,
+    reqGender: "Both (Male & Female for OTA)",
+    marital: "Unmarried (Married allowed for certain OTA terms)",
+    minEdu: ["Graduate_Any", "Graduate_Engg"],
+    minPercentage: 0,
+    minHeightMale: 157.5,
+    minHeightFemale: 152,
+    physicalText: "Height: 157.5 cm (Army/Navy), 162.5 cm (AFA). Minimum 1.6 km run.",
+    stagesText: "Written Exam (English + GK + Maths) -> 5-Day SSB Interview -> Special Medical Board."
+  },
+  "AFCAT": {
+    name: "Air Force Common Admission Test (AFCAT)",
+    minAge: 20.0,
+    maxAge: 26.0,
+    reqGender: "Both",
+    marital: "Unmarried below 25 years",
+    minEdu: ["Graduate_Any", "Graduate_Engg"],
+    minPercentage: 60.0,
+    minHeightMale: 157.5,
+    minHeightFemale: 152,
+    physicalText: "Flying Branch: Height 162.5 cm with leg length 99-120 cm. Ground Duty: 157.5 cm.",
+    stagesText: "Online CBT Exam (100 Qs, 300 Marks) -> AFSB Screening & Interview -> CPSS (Flying) -> Medicals."
+  },
+  "AGNIVEER_ARMY_GD": {
+    name: "Indian Army Agniveer General Duty",
+    minAge: 17.5,
+    maxAge: 21.0,
+    reqGender: "Both",
+    marital: "Unmarried",
+    minEdu: ["10th", "12th_PCM", "12th_Other", "Graduate_Any", "Graduate_Engg"],
+    minPercentage: 45.0,
+    minHeightMale: 169,
+    minHeightFemale: 162,
+    physicalText: "1.6 Km run (Group 1: under 5m 30s = 60m), 10 Beam Pull-ups (40m), 9-ft Ditch Jump, Zig-Zag balance.",
+    stagesText: "Phase 1: Online CEE -> Phase 2: Recruitment Rally Physical Fitness Test (PFT) -> Phase 3: Medical Exam."
+  },
+  "AGNIVEER_ARMY_TECH": {
+    name: "Indian Army Agniveer Technical",
+    minAge: 17.5,
+    maxAge: 21.0,
+    reqGender: "Male",
+    marital: "Unmarried",
+    minEdu: ["12th_PCM", "Graduate_Engg"],
+    minPercentage: 50.0,
+    minHeightMale: 169,
+    minHeightFemale: 162,
+    physicalText: "1.6 Km run qualifying, pull-ups, physical measurement tests.",
+    stagesText: "Online CEE (Physics, Chemistry, Maths, GK - 200 Marks) -> Rally PFT -> Medicals."
+  },
+  "AGNIVEER_NAVY_SSR": {
+    name: "Indian Navy Agniveer SSR",
+    minAge: 17.5,
+    maxAge: 21.0,
+    reqGender: "Both",
+    marital: "Unmarried",
+    minEdu: ["12th_PCM", "Graduate_Engg"],
+    minPercentage: 50.0,
+    minHeightMale: 157,
+    minHeightFemale: 152,
+    physicalText: "1.6 Km run (6.5 min male, 8 min female), 20 Squats, 12 Push-ups.",
+    stagesText: "Stage I: INET CBT -> Stage II: Physical Fitness Test & Written Test -> Stage III: Medical at INS Chilka."
+  },
+  "AGNIVEERVAYU": {
+    name: "Indian Air Force Agniveervayu",
+    minAge: 17.5,
+    maxAge: 21.0,
+    reqGender: "Both",
+    marital: "Unmarried",
+    minEdu: ["12th_PCM", "12th_Other", "Graduate_Engg"],
+    minPercentage: 50.0,
+    minHeightMale: 152.5,
+    minHeightFemale: 152,
+    physicalText: "1.6 Km run in 7 minutes, 10 Push-ups, 10 Sit-ups, 20 Squats.",
+    stagesText: "Phase I: Online CBT -> Phase II: PFT & Adaptability Tests I & II -> Phase III: Medicals."
+  },
+  "CAPF_AC": {
+    name: "UPSC CAPF (Assistant Commandant)",
+    minAge: 20.0,
+    maxAge: 25.0,
+    reqGender: "Both",
+    marital: "Both",
+    minEdu: ["Graduate_Any", "Graduate_Engg"],
+    minPercentage: 0,
+    minHeightMale: 165,
+    minHeightFemale: 157,
+    physicalText: "100m race in 16s (men) / 18s (women), 800m in 3m 45s, Long Jump 3.5m, Shot Put 4.5m.",
+    stagesText: "Paper I (General Ability) + Paper II (Descriptive Essay) -> PET/PST -> Interview/Personality (150m)."
+  },
+  "SSC_GD": {
+    name: "SSC GD Constable (Paramilitary)",
+    minAge: 18.0,
+    maxAge: 23.0,
+    reqGender: "Both",
+    marital: "Both",
+    minEdu: ["10th", "12th_PCM", "12th_Other", "Graduate_Any", "Graduate_Engg"],
+    minPercentage: 0,
+    minHeightMale: 170,
+    minHeightFemale: 157,
+    physicalText: "5 Km run in 24 mins (male), 1.6 Km run in 8.5 mins (female).",
+    stagesText: "Computer Based Exam (80 Qs, 160m) -> PET/PST -> Detailed Medical Exam (DME) -> Verification."
+  },
+  "COAST_GUARD_GD": {
+    name: "Indian Coast Guard Navik (GD)",
+    minAge: 18.0,
+    maxAge: 22.0,
+    reqGender: "Male",
+    marital: "Unmarried",
+    minEdu: ["12th_PCM", "Graduate_Engg"],
+    minPercentage: 50.0,
+    minHeightMale: 157,
+    minHeightFemale: 152,
+    physicalText: "1.6 Km run in 7 mins, 20 Squats, 10 Push-ups.",
+    stagesText: "Stage-I CBT (Section I + II) -> Stage-II PFT & Initial Medical -> Stage-III Enrolment Medical."
+  }
+};
+
+document.getElementById('btn-run-check').addEventListener('click', () => {
+  const examCode = document.getElementById('exam-select').value;
+  const dobVal = document.getElementById('dob-input').value;
+  const gender = document.getElementById('gender-select').value;
+  const marital = document.getElementById('marital-select').value;
+  const category = document.getElementById('category-select').value;
+  const edu = document.getElementById('edu-select').value;
+  const pct = parseFloat(document.getElementById('percentage-input').value) || 0;
+  const height = parseFloat(document.getElementById('height-input').value) || 0;
+
+  if (!examCode || !dobVal) {
+    alert("Please select both a target examination and your Date of Birth.");
+    return;
+  }
+
+  const spec = examSpecs[examCode];
+  if (!spec) return;
+
+  // Calculate Age as of reference date (2026-10-15)
+  const refDate = new Date('2026-10-15');
+  const birthDate = new Date(dobVal);
+  let age = (refDate - birthDate) / (1000 * 60 * 60 * 24 * 365.25);
+  age = Math.round(age * 10) / 10;
+
+  // Age relaxation calculations
+  let maxAge = spec.maxAge;
+  let relaxationNote = "No category age relaxation applicable for this entry";
+  if (examCode === 'SSC_GD' || examCode === 'CAPF_AC' || examCode === 'COAST_GUARD_GD') {
+    if (category === 'SC' || category === 'ST') {
+      maxAge += 5.0;
+      relaxationNote = `+5 Years Relaxation granted for ${category} category (Max Age: ${maxAge} yrs)`;
+    } else if (category === 'OBC') {
+      maxAge += 3.0;
+      relaxationNote = `+3 Years Relaxation granted for OBC category (Max Age: ${maxAge} yrs)`;
+    }
+  }
+
+  const isAgeValid = (age >= spec.minAge && age <= maxAge);
+  const isEduValid = spec.minEdu.includes(edu);
+  const isPctValid = (pct >= spec.minPercentage);
+  const reqHeight = (gender === 'Female') ? spec.minHeightFemale : spec.minHeightMale;
+  const isHeightValid = (height >= reqHeight);
+  const isMaritalValid = (spec.marital === "Both" || spec.marital.includes(marital));
+
+  const allPassed = (isAgeValid && isEduValid && isPctValid && isHeightValid && isMaritalValid);
+
+  // Hide placeholder, show results
+  document.getElementById('eligibility-placeholder').classList.add('hidden');
+  const resContainer = document.getElementById('eligibility-results');
+  resContainer.classList.remove('hidden');
+
+  const banner = document.getElementById('status-banner');
+  const vTitle = document.getElementById('verdict-title');
+  const vDesc = document.getElementById('verdict-desc');
+  const vIcon = document.getElementById('verdict-icon');
+
+  if (allPassed) {
+    banner.className = "p-5 rounded-xl border flex items-center justify-between bg-emerald-950/70 border-emerald-500/70 text-emerald-200";
+    vTitle.textContent = "CONGRATULATIONS: ELIGIBLE";
+    vDesc.textContent = `You meet the fundamental age (${age} Yrs), educational, physical and marital parameters for ${spec.name}.`;
+    vIcon.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i>`;
+  } else {
+    banner.className = "p-5 rounded-xl border flex items-center justify-between bg-red-950/70 border-red-500/70 text-red-200";
+    vTitle.textContent = "NOT ELIGIBLE / CRITERIA DEFICIT";
+    vDesc.textContent = `You do not meet one or more mandatory conditions for ${spec.name}. Check the itemized checklist below.`;
+    vIcon.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-rose-400"></i>`;
+  }
+
+  // Populate Itemized Checklist
+  const cl = document.getElementById('criteria-checklist');
+  cl.innerHTML = `
+    <div class="flex items-start justify-between p-3 rounded bg-[#112016] border ${isAgeValid ? 'border-emerald-600/40 text-emerald-300' : 'border-rose-600/50 text-rose-300'}">
+      <div>
+        <strong>1. Age Criteria:</strong> Your age is <strong>${age} years</strong> (Allowed Bracket: ${spec.minAge} to ${maxAge} yrs).
+        <p class="text-[11px] text-gray-400 mt-0.5">${relaxationNote}</p>
+      </div>
+      <span class="font-bold font-mono text-sm">${isAgeValid ? '✔ PASS' : '✖ FAIL'}</span>
+    </div>
+
+    <div class="flex items-start justify-between p-3 rounded bg-[#112016] border ${isEduValid ? 'border-emerald-600/40 text-emerald-300' : 'border-rose-600/50 text-rose-300'}">
+      <div>
+        <strong>2. Educational Stream:</strong> Selected: <strong>${edu.replace('_', ' ')}</strong>.
+        <p class="text-[11px] text-gray-400 mt-0.5">Required qualification level matches official entry notification.</p>
+      </div>
+      <span class="font-bold font-mono text-sm">${isEduValid ? '✔ PASS' : '✖ FAIL'}</span>
+    </div>
+
+    <div class="flex items-start justify-between p-3 rounded bg-[#112016] border ${isPctValid ? 'border-emerald-600/40 text-emerald-300' : 'border-rose-600/50 text-rose-300'}">
+      <div>
+        <strong>3. Minimum Marks (%):</strong> You entered <strong>${pct}%</strong> (Required minimum: ${spec.minPercentage}%).
+      </div>
+      <span class="font-bold font-mono text-sm">${isPctValid ? '✔ PASS' : '✖ FAIL'}</span>
+    </div>
+
+    <div class="flex items-start justify-between p-3 rounded bg-[#112016] border ${isHeightValid ? 'border-emerald-600/40 text-emerald-300' : 'border-rose-600/50 text-rose-300'}">
+      <div>
+        <strong>4. Height Standard:</strong> Entered <strong>${height} cm</strong> (Prescribed standard for ${gender}: ${reqHeight} cm).
+      </div>
+      <span class="font-bold font-mono text-sm">${isHeightValid ? '✔ PASS' : '✖ FAIL'}</span>
+    </div>
+
+    <div class="flex items-start justify-between p-3 rounded bg-[#112016] border ${isMaritalValid ? 'border-emerald-600/40 text-emerald-300' : 'border-rose-600/50 text-rose-300'}">
+      <div>
+        <strong>5. Marital Status:</strong> Selected <strong>${marital}</strong> (Prescribed: ${spec.marital}).
+      </div>
+      <span class="font-bold font-mono text-sm">${isMaritalValid ? '✔ PASS' : '✖ FAIL'}</span>
+    </div>
+  `;
+
+  // Exam physical & stages text
+  document.getElementById('exam-standards-content').innerHTML = `
+    <p><strong>Physical Fitness Test (PFT):</strong> ${spec.physicalText}</p>
+    <p><strong>Recruitment Stages:</strong> ${spec.stagesText}</p>
+  `;
+});
+</script>
+{% endblock %}

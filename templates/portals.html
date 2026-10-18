@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}Official Defence Recruitment Portals Directory – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <!-- Header Banner -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325]">
+    <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+      <i class="fa-solid fa-link text-emerald-400"></i>
+      <span>VERIFIED GOVERNMENT GATEWAYS</span>
+    </div>
+    <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+      Official Defence Recruitment Portals Directory
+    </h1>
+    <p class="text-sm text-gray-400 mt-1 max-w-3xl">
+      Direct access to genuine government and armed forces recruitment servers. All official application submissions must be completed strictly on these verified external portals.
+    </p>
+  </div>
+
+  <!-- Mandatory Statutory Notice -->
+  <div class="bg-amber-950/40 border border-amber-500/50 rounded-xl p-4 mb-8 text-xs text-amber-200 leading-relaxed flex items-start gap-3">
+    <i class="fa-solid fa-triangle-exclamation text-amber-400 text-base mt-0.5 shrink-0"></i>
+    <div>
+      <strong class="font-bold">Official Statutory Disclaimer:</strong>
+      <p class="mt-0.5">
+        Defence Path is an independent educational platform. It is not affiliated with the Government of India or any official defence recruitment organization. Never share portal passwords or OTPs with unauthorized parties. Always verify eligibility and application details on the official recruitment website.
+      </p>
+    </div>
+  </div>
+
+  <!-- Portals Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for portal in portals %}
+      <div class="military-card military-card-hud p-6 flex flex-col justify-between">
+        <div>
+          <!-- Header with Icon & Category -->
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-12 h-12 rounded-lg bg-[#14261B] border border-[#274431] flex items-center justify-center text-amber-400 text-xl">
+              <i class="fa-solid {{ portal.logo_icon or 'fa-shield-halved' }}"></i>
+            </div>
+            <span class="px-2.5 py-1 rounded text-[11px] font-mono font-bold uppercase bg-[#182C1F] text-emerald-400 border border-[#2D5239]">
+              {{ portal.category }}
+            </span>
+          </div>
+
+          <h3 class="text-lg font-bold text-white mb-2 leading-snug">
+            {{ portal.org_name }}
+          </h3>
+
+          <p class="text-xs text-gray-300 leading-relaxed mb-4">
+            {{ portal.description }}
+          </p>
+
+          <div class="text-[11px] text-gray-400 font-mono space-y-1 mb-5">
+            <p>• Official Domain: <span class="text-gray-200 truncate">{{ portal.official_website.replace('https://', '') }}</span></p>
+            <p>• Verification Status: <span class="text-emerald-400 font-semibold">Verified Active ({{ portal.last_verified }})</span></p>
+          </div>
+        </div>
+
+        <!-- Action Links -->
+        <div class="pt-4 border-t border-[#1F3325] space-y-2">
+          <a href="{{ portal.apply_url }}" target="_blank" rel="noopener noreferrer" class="w-full btn-military-gold py-2 rounded text-center text-xs font-bold font-mono flex items-center justify-center gap-1.5 shadow">
+            Apply Online Portal <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+          </a>
+
+          <div class="grid grid-cols-2 gap-2">
+            <a href="{{ portal.official_website }}" target="_blank" rel="noopener noreferrer" class="bg-[#142319] hover:bg-[#1C3224] text-gray-300 hover:text-white border border-[#243B2C] py-1.5 px-2 rounded text-center text-[11px] font-mono transition-all">
+              Main Website
+            </a>
+            <a href="{{ portal.notification_url }}" target="_blank" rel="noopener noreferrer" class="bg-[#142319] hover:bg-[#1C3224] text-amber-300 hover:text-amber-200 border border-[#243B2C] py-1.5 px-2 rounded text-center text-[11px] font-mono transition-all">
+              Notifications
+            </a>
+          </div>
+        </div>
+
+      </div>
+    {% endfor %}
+  </div>
+
+</section>
+{% endblock %}

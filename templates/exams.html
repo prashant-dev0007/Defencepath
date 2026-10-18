@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}Defence Examinations, Exam Patterns & Structured Syllabus – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <!-- Header Banner -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325]">
+    <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+      <i class="fa-solid fa-graduation-cap text-emerald-400"></i>
+      <span>ARMED FORCES RECRUITMENT INTELLIGENCE & SYLLABUS DIRECTORY</span>
+    </div>
+    <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+      Indian Defence Examinations & Official Patterns
+    </h1>
+    <p class="text-sm text-gray-400 mt-1 max-w-3xl">
+      Official exam patterns, structured topic-wise syllabus, age cutoff guidelines, and marking schemes across the Indian Army, Indian Navy, Indian Air Force, Coast Guard, and CAPF.
+    </p>
+  </div>
+
+  <!-- Examinations List -->
+  <div class="space-y-8">
+    {% for exam in exams %}
+      <div id="{{ exam.code }}" class="military-card military-card-hud p-6 sm:p-8">
+        
+        <div class="flex flex-col lg:flex-row lg:items-start justify-between gap-4 pb-4 border-b border-[#1E3526] mb-6">
+          <div>
+            <div class="flex items-center gap-2 mb-2">
+              <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold uppercase bg-amber-950 text-amber-300 border border-amber-600">
+                {{ exam.code }} &bull; {{ exam.category }}
+              </span>
+              <span class="text-xs font-mono text-emerald-400 bg-[#0F2015] px-2 py-0.5 rounded border border-[#1E3B27]">
+                {{ exam.organization }}
+              </span>
+            </div>
+            <h2 class="text-2xl font-bold font-['Chakra_Petch'] text-white">
+              {{ exam.name }}
+            </h2>
+            <p class="text-xs text-gray-400 font-mono mt-1 max-w-2xl">
+              {{ exam.description }}
+            </p>
+          </div>
+
+          <!-- Quick Action Buttons -->
+          <div class="flex flex-wrap gap-2 shrink-0">
+            <a href="/tests?exam={{ exam.code }}" class="btn-military-gold py-2 px-3.5 rounded text-xs font-bold font-mono flex items-center gap-1.5 shadow">
+              <i class="fa-solid fa-stopwatch"></i> Practice Mock Tests
+            </a>
+            <a href="/pyq?exam={{ exam.code }}" class="bg-[#172C1E] hover:bg-[#203D2B] text-gray-200 border border-[#2B4B36] py-2 px-3 rounded text-xs font-mono flex items-center gap-1.5 transition-all">
+              <i class="fa-solid fa-book"></i> Browse PYQs
+            </a>
+            {% if exam.official_portal_url %}
+              <a href="{{ exam.official_portal_url }}" target="_blank" rel="noopener noreferrer" class="bg-[#121F16] hover:bg-[#1A2E20] text-gray-400 hover:text-white border border-[#22392A] py-2 px-2.5 rounded text-xs" title="Official Website">
+                <i class="fa-solid fa-arrow-up-right-from-square"></i>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Specifications Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs font-mono bg-[#0D1812] p-4 rounded-xl border border-[#1E3626] mb-6">
+          <div>
+            <span class="text-gray-400 block text-[11px] mb-0.5">Eligibility Bracket:</span>
+            <strong class="text-amber-300">{{ exam.min_age }} – {{ exam.max_age }} Years</strong>
+          </div>
+          <div>
+            <span class="text-gray-400 block text-[11px] mb-0.5">Educational Criteria:</span>
+            <strong class="text-white">{{ exam.educational_qualification }}</strong>
+          </div>
+          <div>
+            <span class="text-gray-400 block text-[11px] mb-0.5">Selection Pipeline:</span>
+            <span class="text-emerald-400 truncate block" title="{{ exam.selection_stages }}">{{ exam.selection_stages or 'Written -> SSB / Physical -> Medical' }}</span>
+          </div>
+          <div>
+            <span class="text-gray-400 block text-[11px] mb-0.5">Physical Standards:</span>
+            <span class="text-gray-300 truncate block" title="{{ exam.physical_standards }}">{{ exam.physical_standards or 'Official Height & Fitness rules' }}</span>
+          </div>
+        </div>
+
+        <!-- Structured Syllabus Breakdown for this Exam -->
+        <div>
+          <h3 class="text-sm font-bold font-mono uppercase tracking-wider text-amber-400 mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-list-check text-xs"></i> Official Exam Pattern & Topic-Wise Syllabus
+          </h3>
+
+          {% set exam_topics = syllabus_by_exam.get(exam.code, []) %}
+          {% if exam_topics %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {% for topic in exam_topics %}
+                <div class="bg-[#101D15] border border-[#1E3525] p-3.5 rounded-lg flex flex-col justify-between">
+                  <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                      <span class="text-emerald-400 font-mono text-[11px] font-bold">{{ topic.subject }}</span>
+                      <span class="text-[10px] text-gray-400 font-mono">{{ topic.stage_name }}</span>
+                    </div>
+                    <h4 class="text-white font-bold text-xs mb-1">{{ topic.topic_name }}</h4>
+                    <p class="text-[11px] text-gray-400 font-sans leading-relaxed">{{ topic.subtopics }}</p>
+                  </div>
+                  <div class="pt-2 mt-2 border-t border-[#1B2F21] flex items-center justify-between text-[10px] font-mono text-gray-400">
+                    <span>Q Count: <strong class="text-white">{{ topic.question_count }} Qs</strong></span>
+                    <span>Marking: <strong class="text-emerald-400">+{{ topic.marks_per_question }}</strong> / <strong class="text-rose-400">-{{ topic.negative_marks }}</strong></span>
+                    <span>{{ topic.duration_minutes }} Min</span>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% else %}
+            <p class="text-xs text-gray-500 font-mono italic">
+              {{ exam.exam_pattern or 'Official exam pattern is verified as per current year UPSC / Service Headquarters notification.' }}
+            </p>
+          {% endif %}
+        </div>
+
+      </div>
+    {% endfor %}
+  </div>
+
+</section>
+{% endblock %}

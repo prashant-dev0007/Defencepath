@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}First-Time Administrator Setup &bull; DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-16 px-4 sm:px-6 lg:px-8 max-w-lg mx-auto">
+  
+  <div class="text-center mb-8">
+    <div class="w-14 h-14 rounded-2xl bg-amber-400 mx-auto flex items-center justify-center text-black font-extrabold text-2xl mb-3 shadow-xl shadow-amber-950/40 border-2 border-amber-300">
+      <i class="fa-solid fa-user-shield"></i>
+    </div>
+    <span class="text-xs font-mono text-amber-400 uppercase tracking-widest bg-amber-950/80 px-3 py-1 rounded-full border border-amber-600/50">
+      RESTRICTED GATEWAY &bull; INITIAL PROVISIONING ONLY
+    </span>
+    <h1 class="text-2xl sm:text-3xl font-extrabold font-['Chakra_Petch'] text-white mt-3">
+      First-Time Administrator Setup
+    </h1>
+    <p class="text-xs text-gray-400 font-mono mt-1">
+      Establish master security credentials for the authorized administrator account
+    </p>
+  </div>
+
+  <div class="bg-[#0C1610] border-2 border-amber-500/60 rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+    <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 pb-3 mb-5 border-b border-[#1F3627]">
+      <i class="fa-solid fa-lock"></i>
+      <span>VERIFY REGISTERED ADMINISTRATOR EMAIL</span>
+    </div>
+
+    <div class="mb-4 bg-amber-950/30 border border-amber-600/40 rounded-lg p-3 text-xs text-amber-200/90 font-mono">
+      <i class="fa-solid fa-triangle-exclamation text-amber-400 mr-1.5"></i>
+      First-time setup can only be performed once to establish your master credentials. Subsequent access requires your registered email and password.
+    </div>
+
+    <form method="POST" action="/admin/setup" class="space-y-4 text-xs font-mono">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      <div>
+        <label class="block text-gray-300 mb-1.5 font-bold">
+          Administrator Registered Email Address <span class="text-amber-400">*</span>
+        </label>
+        <div class="relative">
+          <span class="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+            <i class="fa-solid fa-envelope"></i>
+          </span>
+          <input type="email" name="email" required placeholder="admin@defencepath.in" autofocus
+                 class="w-full bg-[#122218] border border-[#2B4E38] rounded-lg pl-9 pr-3 py-2.5 text-white placeholder-gray-500 focus:outline-none focus:border-amber-400 focus:ring-1 focus:ring-amber-400 transition-all">
+        </div>
+        <p class="text-[11px] text-gray-400 mt-1">
+          A 6-digit cryptographic verification code will be sent to this address to verify administrator authorization.
+        </p>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black py-3 rounded-lg font-bold font-mono tracking-wider shadow-xl transition-all flex items-center justify-center gap-2">
+          <i class="fa-solid fa-paper-plane"></i> Verify Identity & Transmit OTP
+        </button>
+      </div>
+
+      <div class="pt-4 border-t border-[#1C3224] flex items-center justify-between text-xs">
+        <a href="/admin/login" class="text-gray-400 hover:text-amber-400 transition-colors">
+          &larr; Return to Admin Login Gateway
+        </a>
+        <a href="/forgot-password?role=admin" class="text-amber-400 hover:text-amber-300 transition-colors">
+          Forgot Password? &rarr;
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <div class="text-center mt-6 text-xs text-gray-500 font-mono">
+    Protected by single-use hashed OTP tokens, 5-minute timeout, and server rate-limiting.
+  </div>
+
+</section>
+{% endblock %}

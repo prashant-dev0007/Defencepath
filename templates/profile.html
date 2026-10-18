@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+
+{% block title %}My Cadet Profile & Settings – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-4xl mx-auto">
+  
+  <div class="mb-8 pb-6 border-b border-[#1E3325]">
+    <div class="flex items-center space-x-2 text-xs font-mono text-emerald-400 mb-2">
+      <i class="fa-solid fa-user-gear"></i>
+      <span>CADET DOSSIER CONFIGURATION</span>
+    </div>
+    <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+      My Aspirant Profile
+    </h1>
+    <p class="text-sm text-gray-400 mt-1">
+      Manage your personal credentials, target examination, and account security.
+    </p>
+  </div>
+
+  <div class="bg-[#0C1610] border border-[#233C2B] rounded-xl p-6 sm:p-8 shadow-xl">
+    <form method="POST" action="/profile/update" class="space-y-6 text-xs font-mono">
+      
+      <div class="flex items-center space-x-5 pb-6 border-b border-[#1E3325]">
+        <img src="{{ user.profile_image or '/static/uploads/developer/prashant_image.jpeg' }}" class="w-20 h-20 rounded-full object-cover border-2 border-amber-400 shadow-lg">
+        <div>
+          <h2 class="text-lg font-bold text-white">{{ user.full_name }}</h2>
+          <p class="text-emerald-400 font-mono text-xs">@{{ user.username }} &bull; Role: {{ user.role }}</p>
+          <span class="text-[10px] text-gray-400 mt-1 block">Account Created: {{ user.created_at }}</span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-300 mb-1">Full Legal Name</label>
+          <input type="text" name="full_name" value="{{ user.full_name }}" required class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Email Address</label>
+          <input type="email" name="email" value="{{ user.email }}" required class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-gray-300 mb-1">Contact Phone Number</label>
+          <input type="text" name="phone" value="{{ user.phone or '' }}" placeholder="10-digit mobile number" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+        </div>
+
+        <div>
+          <label class="block text-gray-300 mb-1">Primary Target Examination</label>
+          <select name="target_exam" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+            <option value="UPSC NDA & NA" {% if user.target_exam == 'UPSC NDA & NA' %}selected{% endif %}>UPSC NDA & NA</option>
+            <option value="UPSC CDS Examination" {% if user.target_exam == 'UPSC CDS Examination' %}selected{% endif %}>UPSC CDS (IMA, INA, AFA, OTA)</option>
+            <option value="Indian Air Force AFCAT" {% if user.target_exam == 'Indian Air Force AFCAT' %}selected{% endif %}>Indian Air Force AFCAT</option>
+            <option value="Indian Army Agniveer GD" {% if user.target_exam == 'Indian Army Agniveer GD' %}selected{% endif %}>Indian Army Agniveer GD</option>
+            <option value="Indian Navy Agniveer SSR" {% if user.target_exam == 'Indian Navy Agniveer SSR' %}selected{% endif %}>Indian Navy Agniveer SSR</option>
+            <option value="SSC GD Constable" {% if user.target_exam == 'SSC GD Constable' %}selected{% endif %}>SSC GD Constable</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-[#1E3325]">
+        <h3 class="text-sm font-bold text-amber-400 mb-2">Change Password (Leave blank to keep existing)</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-gray-400 mb-1">New Password</label>
+            <input type="password" name="new_password" placeholder="••••••••" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+          </div>
+          <div>
+            <label class="block text-gray-400 mb-1">Confirm New Password</label>
+            <input type="password" name="confirm_new_password" placeholder="••••••••" class="w-full bg-[#122218] border border-[#264230] rounded p-2 text-white focus:outline-none focus:border-amber-400">
+          </div>
+        </div>
+      </div>
+
+      <div class="pt-4 border-t border-[#1E3325] flex justify-end">
+        <button type="submit" class="btn-military-gold px-6 py-2.5 rounded font-bold font-mono text-xs">
+          Save Profile Changes
+        </button>
+      </div>
+
+    </form>
+  </div>
+
+</section>
+{% endblock %}

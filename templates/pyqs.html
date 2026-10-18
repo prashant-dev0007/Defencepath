@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+
+{% block title %}Authentic Defence PYQ Library – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
+  
+  <!-- Header Banner -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325]">
+    <div class="flex items-center space-x-2 text-xs font-mono text-amber-400 mb-2">
+      <i class="fa-solid fa-book-bookmark text-amber-400"></i>
+      <span>ARCHIVE OF PREVIOUS YEAR EXAM PAPERS</span>
+    </div>
+    <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+      Authentic Defence PYQ Library
+    </h1>
+    <p class="text-sm text-gray-400 mt-1 max-w-3xl">
+      Official Previous Year Question Papers for UPSC NDA, CDS, AFCAT, Indian Army Agniveer GD/Technical, Indian Navy SSR, and SSC GD with step-by-step verified explanations.
+    </p>
+  </div>
+
+  <!-- Filters Row -->
+  <div class="bg-[#0D1812] border border-[#21382A] rounded-xl p-5 mb-8 shadow-xl">
+    <form method="GET" action="/pyq" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      
+      <!-- Exam Filter -->
+      <div>
+        <label class="block text-xs font-mono text-gray-400 mb-1">Target Examination</label>
+        <select name="exam" class="w-full bg-[#122218] border border-[#264230] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+          <option value="">All Examinations</option>
+          <option value="NDA" {% if query_exam == 'NDA' %}selected{% endif %}>UPSC NDA & NA</option>
+          <option value="CDS" {% if query_exam == 'CDS' %}selected{% endif %}>UPSC CDS Examination</option>
+          <option value="AFCAT" {% if query_exam == 'AFCAT' %}selected{% endif %}>Indian Air Force AFCAT</option>
+          <option value="AGNIVEER_ARMY_GD" {% if query_exam == 'AGNIVEER_ARMY_GD' %}selected{% endif %}>Indian Army Agniveer GD</option>
+          <option value="SSC_GD" {% if query_exam == 'SSC_GD' %}selected{% endif %}>SSC GD Constable</option>
+        </select>
+      </div>
+
+      <!-- Subject Filter -->
+      <div>
+        <label class="block text-xs font-mono text-gray-400 mb-1">Subject</label>
+        <select name="subject" class="w-full bg-[#122218] border border-[#264230] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+          <option value="">All Subjects</option>
+          <option value="Mathematics" {% if query_sub == 'Mathematics' %}selected{% endif %}>Mathematics</option>
+          <option value="General Ability" {% if query_sub == 'General Ability' %}selected{% endif %}>General Ability / GK</option>
+          <option value="Reasoning & Aptitude" {% if query_sub == 'Reasoning & Aptitude' %}selected{% endif %}>Reasoning & Military Aptitude</option>
+          <option value="All Subjects" {% if query_sub == 'All Subjects' %}selected{% endif %}>Full Length Composite</option>
+        </select>
+      </div>
+
+      <!-- Difficulty -->
+      <div>
+        <label class="block text-xs font-mono text-gray-400 mb-1">Difficulty Level</label>
+        <select name="difficulty" class="w-full bg-[#122218] border border-[#264230] rounded-lg px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+          <option value="">All Difficulty Levels</option>
+          <option value="Easy" {% if query_diff == 'Easy' %}selected{% endif %}>Easy</option>
+          <option value="Moderate" {% if query_diff == 'Moderate' %}selected{% endif %}>Moderate</option>
+          <option value="Hard" {% if query_diff == 'Hard' %}selected{% endif %}>Hard / Advanced</option>
+        </select>
+      </div>
+
+      <!-- Actions -->
+      <div class="flex items-end space-x-2">
+        <button type="submit" class="flex-1 btn-military-gold py-2 rounded-lg text-xs font-bold font-mono">
+          <i class="fa-solid fa-filter"></i> Filter PYQs
+        </button>
+        <a href="/pyq" class="bg-[#182C20] hover:bg-[#203D2B] text-gray-300 px-3 py-2 rounded-lg text-xs font-mono border border-[#2B4B36]">
+          Reset
+        </a>
+      </div>
+
+    </form>
+  </div>
+
+  <!-- Papers Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    {% for paper in papers %}
+      <div class="military-card military-card-hud p-6 flex flex-col justify-between">
+        <div>
+          <!-- Header Badges -->
+          <div class="flex items-center justify-between mb-3">
+            <span class="px-2.5 py-0.5 rounded text-xs font-mono font-bold uppercase bg-amber-950 text-amber-400 border border-amber-600">
+              PYQ {{ paper.year }}
+            </span>
+            <span class="text-xs font-mono text-emerald-400 font-semibold">
+              <i class="fa-solid fa-clock mr-1"></i> {{ paper.duration_minutes }} Mins
+            </span>
+          </div>
+
+          <h3 class="text-lg font-bold text-white mb-2 leading-snug">
+            {{ paper.title }}
+          </h3>
+
+          <div class="text-xs text-gray-400 space-y-1.5 font-mono mb-5 bg-[#0F1B14] p-3 rounded border border-[#1E3325]">
+            <p>• Subject: <strong class="text-gray-200">{{ paper.subject }}</strong></p>
+            <p>• Questions: <strong class="text-gray-200">{{ paper.total_questions }} Questions</strong></p>
+            <p>• Maximum Marks: <strong class="text-amber-400">{{ paper.max_marks }} Marks</strong></p>
+            <p>• Marking Scheme: <strong class="text-emerald-400">+{{ paper.marks_per_correct }}</strong> / <strong class="text-rose-400">-{{ paper.negative_marks }} Neg</strong></p>
+            <p>• Available Languages: <span class="text-blue-300">{{ paper.languages }}</span></p>
+          </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="pt-4 border-t border-[#1F3325] space-y-2">
+          <a href="/start-test/{{ paper.id }}" class="w-full btn-military-gold py-2.5 rounded text-center text-xs font-bold font-mono flex items-center justify-center gap-2 shadow">
+            <i class="fa-solid fa-play"></i> Attempt CBT Online Test
+          </a>
+
+          <div class="grid grid-cols-2 gap-2">
+            <a href="/download-paper-pdf/{{ paper.id }}" class="bg-[#172C1E] hover:bg-[#203D2B] text-gray-200 border border-[#2B4B36] py-2 px-2 rounded text-center text-xs font-mono flex items-center justify-center gap-1 transition-all">
+              <i class="fa-solid fa-file-pdf text-rose-400"></i> Download PDF
+            </a>
+            <a href="/pyq-view/{{ paper.id }}" class="bg-[#172C1E] hover:bg-[#203D2B] text-amber-300 border border-[#2B4B36] py-2 px-2 rounded text-center text-xs font-mono flex items-center justify-center gap-1 transition-all">
+              <i class="fa-solid fa-eye"></i> View Paper
+            </a>
+          </div>
+        </div>
+
+      </div>
+    {% endfor %}
+  </div>
+
+</section>
+{% endblock %}

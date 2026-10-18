@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBT Examination Console – {{ paper.title }}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="/static/css/theme.css">
+  <style>
+    /* Fullscreen CBT layout locks standard scrolling of window */
+    body {
+      background-color: #070B08;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="select-none text-gray-100 font-sans">
+
+  <!-- Top Tactical CBT Header -->
+  <header class="bg-[#0B150F] border-b border-[#213829] px-4 py-2.5 flex items-center justify-between shrink-0 shadow-md">
+    <div class="flex items-center space-x-3">
+      <div class="w-8 h-8 rounded bg-amber-400 flex items-center justify-center text-black font-bold">
+        <i class="fa-solid fa-shield-halved text-sm"></i>
+      </div>
+      <div>
+        <h1 class="text-sm sm:text-base font-bold font-['Chakra_Petch'] text-white truncate max-w-xs sm:max-w-md md:max-w-lg">
+          {{ paper.title }}
+        </h1>
+        <p class="text-[10px] text-gray-400 font-mono">
+          {{ paper.exam_code }} &bull; Max Marks: {{ paper.max_marks }} &bull; Marking: +{{ paper.marks_per_correct }} / -{{ paper.negative_marks }}
+        </p>
+      </div>
+    </div>
+
+    <!-- Center Timer & Right Controls -->
+    <div class="flex items-center space-x-4">
+      
+      <!-- Bilingual Toggle Button -->
+      <button id="btn-toggle-lang" class="bg-[#14261B] hover:bg-[#1E3B2A] text-amber-300 border border-[#2D543A] px-2.5 py-1 rounded text-xs font-mono transition-all">
+        हिंदी में देखें
+      </button>
+
+      <!-- Timer Box -->
+      <div class="bg-[#121E16] border border-amber-500/40 px-3 py-1 rounded flex items-center space-x-2">
+        <i class="fa-regular fa-clock text-amber-400 text-xs"></i>
+        <div class="text-right">
+          <span class="text-[9px] uppercase tracking-wider block text-gray-400 font-mono">TIME LEFT</span>
+          <span id="cbt-timer" class="text-sm font-bold font-mono text-emerald-400 tracking-wider">--:--:--</span>
+        </div>
+      </div>
+
+      <!-- Candidate Avatar -->
+      <div class="hidden md:flex items-center space-x-2 border-l border-[#1F3324] pl-3">
+        <img src="{{ session.get('profile_image', '/static/uploads/developer/prashant_image.jpeg') }}" class="w-8 h-8 rounded-full border border-amber-400 object-cover">
+        <div class="text-left text-xs font-mono">
+          <p class="text-white font-bold leading-tight truncate max-w-[100px]">{{ session.get('username', 'Candidate') }}</p>
+          <span class="text-[9px] text-emerald-400">AUTHENTICATED</span>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Main CBT Workspace (Question View on Left, Palette on Right) -->
+  <main class="flex-1 flex flex-col lg:flex-row overflow-hidden">
+    
+    <!-- Left Column: Active Question & Options (Scrollable) -->
+    <div class="flex-1 flex flex-col justify-between overflow-y-auto p-4 sm:p-6 bg-[#080E0A] border-r border-[#1B2F21]">
+      
+      <div>
+        <!-- Question Meta Sub-bar -->
+        <div class="flex flex-wrap items-center justify-between pb-3 border-b border-[#1A2E20] mb-4 gap-2">
+          <div class="flex items-center space-x-2">
+            <span id="cbt-q-number" class="text-sm font-bold font-mono text-amber-400 bg-[#14261B] px-2.5 py-1 rounded border border-[#294B34]">
+              Question 1
+            </span>
+            <span id="cbt-q-subject" class="text-xs font-mono text-gray-300"></span>
+          </div>
+          <span id="cbt-q-marks" class="text-xs font-mono text-emerald-400 bg-[#0F2015] px-2 py-0.5 rounded border border-[#1E3B27]"></span>
+        </div>
+
+        <!-- Question Text -->
+        <div class="bg-[#0D1812] border border-[#223B2A] rounded-xl p-5 mb-6 shadow-lg">
+          <div id="cbt-q-text" class="text-base sm:text-lg text-white font-medium leading-relaxed">
+            Loading examination question...
+          </div>
+        </div>
+
+        <!-- Options Container -->
+        <div id="cbt-options-container" class="space-y-3 mb-6">
+          <!-- Dynamically populated options -->
+        </div>
+      </div>
+
+      <!-- Bottom Action Bar (Previous, Clear, Mark for Review, Save & Next) -->
+      <div class="pt-4 border-t border-[#1B2F21] flex flex-wrap items-center justify-between gap-2 shrink-0 bg-[#080E0A]">
+        <div class="flex items-center space-x-2">
+          <button id="btn-prev" class="bg-[#132218] hover:bg-[#1A3323] text-gray-200 border border-[#274431] px-4 py-2 rounded text-xs font-mono font-bold transition-all">
+            &larr; Previous
+          </button>
+          <button id="btn-clear-resp" class="bg-[#1C1613] hover:bg-[#2C1F1A] text-amber-400 border border-amber-600/40 px-3 py-2 rounded text-xs font-mono transition-all">
+            Clear Response
+          </button>
+          <button id="btn-mark-review" class="bg-purple-950/60 hover:bg-purple-900 text-purple-200 border border-purple-600 px-3.5 py-2 rounded text-xs font-mono font-bold transition-all">
+            <i class="fa-solid fa-bookmark mr-1"></i> Mark for Review & Next
+          </button>
+        </div>
+
+        <button id="btn-save-next" class="btn-military-gold px-6 py-2 rounded text-xs font-bold font-mono shadow-md">
+          Save & Next &rarr;
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Right Column: Question Palette & Navigation (Width 320px) -->
+    <div class="w-full lg:w-80 bg-[#0B150F] flex flex-col justify-between p-4 overflow-y-auto shrink-0 border-t lg:border-t-0 border-[#1B2F21]">
+      
+      <div>
+        <h3 class="text-xs font-bold font-mono uppercase tracking-wider text-amber-400 mb-3 pb-2 border-b border-[#1C3224] flex items-center justify-between">
+          <span>Question Palette</span>
+          <span class="text-[10px] text-gray-400">Total: {{ paper.total_questions }} Qs</span>
+        </h3>
+
+        <!-- Status Legend -->
+        <div class="grid grid-cols-2 gap-2 text-[10px] font-mono mb-4 text-gray-300">
+          <div class="flex items-center space-x-1.5">
+            <span class="w-3.5 h-3.5 rounded bg-[#16A34A] inline-block"></span>
+            <span>Answered (<span id="palette-count-answered">0</span>)</span>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span class="w-3.5 h-3.5 rounded bg-[#DC2626] inline-block"></span>
+            <span>Not Answered (<span id="palette-count-not-answered">0</span>)</span>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span class="w-3.5 h-3.5 rounded bg-[#374151] inline-block"></span>
+            <span>Not Visited (<span id="palette-count-not-visited">0</span>)</span>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span class="w-3.5 h-3.5 rounded bg-[#7C3AED] inline-block"></span>
+            <span>Marked Review (<span id="palette-count-marked">0</span>)</span>
+          </div>
+        </div>
+
+        <!-- Palette Buttons Grid -->
+        <div id="cbt-palette-grid" class="grid grid-cols-5 gap-2 max-h-72 overflow-y-auto p-1 bg-[#09110C] rounded border border-[#192C1F]">
+          <!-- Dynamically populated buttons -->
+        </div>
+      </div>
+
+      <!-- Submit Test Button -->
+      <div class="pt-4 border-t border-[#1C3224] mt-4">
+        <button id="btn-submit-test" class="w-full bg-emerald-700 hover:bg-emerald-600 text-white py-2.5 rounded font-bold font-mono text-xs uppercase tracking-wider shadow-lg flex items-center justify-center gap-2 transition-all">
+          <i class="fa-solid fa-flag-checkered"></i> Submit Examination
+        </button>
+      </div>
+
+    </div>
+
+  </main>
+
+  <!-- Submission Confirmation Modal -->
+  <div id="cbt-submit-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-[#0C1610] border border-[#233C2B] rounded-xl max-w-md w-full p-6 shadow-2xl">
+      <div class="flex items-center space-x-3 mb-4">
+        <div class="w-10 h-10 rounded-full bg-amber-950/80 border border-amber-500/50 flex items-center justify-center text-amber-400">
+          <i class="fa-solid fa-shield-halved text-lg"></i>
+        </div>
+        <div>
+          <h3 class="text-base font-bold text-white font-['Chakra_Petch']">Confirm Examination Submission</h3>
+          <p class="text-xs text-gray-400 font-mono">Verify your attempt summary before final scoring</p>
+        </div>
+      </div>
+
+      <!-- Attempt Summary Table -->
+      <div class="bg-[#121F16] border border-[#203627] rounded-lg p-3 text-xs font-mono space-y-2 mb-6">
+        <div class="flex justify-between text-emerald-400">
+          <span>Answered Questions:</span>
+          <strong id="modal-summary-answered">0</strong>
+        </div>
+        <div class="flex justify-between text-rose-400">
+          <span>Not Answered Questions:</span>
+          <strong id="modal-summary-unanswered">0</strong>
+        </div>
+        <div class="flex justify-between text-purple-400">
+          <span>Marked for Review:</span>
+          <strong id="modal-summary-marked">0</strong>
+        </div>
+        <div class="flex justify-between text-gray-400">
+          <span>Not Visited:</span>
+          <strong id="modal-summary-notvisited">0</strong>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-3">
+        <button onclick="closeSubmitModal()" class="flex-1 bg-[#16271D] hover:bg-[#203829] text-gray-300 py-2 rounded text-xs font-mono border border-[#284934]">
+          Return to Test
+        </button>
+        <button id="btn-confirm-submit" class="flex-1 btn-military-gold py-2 rounded text-xs font-bold font-mono">
+          Confirm & Submit
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CBT Engine JS -->
+  <script src="/static/js/test_engine.js"></script>
+  <script>
+    const serverPaper = {{ paper_json | safe }};
+    const serverQuestions = {{ questions_json | safe }};
+    document.addEventListener('DOMContentLoaded', () => {
+      initCbtEngine(serverPaper, serverQuestions);
+    });
+  </script>
+</body>
+</html>

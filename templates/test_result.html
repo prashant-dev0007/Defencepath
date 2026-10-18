@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Test Evaluation & Performance Dossier – DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-10 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
+  
+  <!-- Header Banner -->
+  <div class="mb-8 pb-6 border-b border-[#1E3325] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center space-x-2 text-xs font-mono text-emerald-400 mb-2">
+        <i class="fa-solid fa-square-poll-vertical"></i>
+        <span>OFFICIAL TEST SCORE REPORT</span>
+      </div>
+      <h1 class="text-3xl font-extrabold font-['Chakra_Petch'] text-white">
+        {{ paper.title }} – Results
+      </h1>
+      <p class="text-xs text-gray-400 font-mono mt-1">
+        Attempted on: {{ attempt.attempt_date }} &bull; Candidate: {{ candidate_name }}
+      </p>
+    </div>
+
+    <div class="flex items-center space-x-3">
+      <a href="/start-test/{{ paper.id }}" class="bg-[#15271C] hover:bg-[#1E3B2A] text-amber-300 border border-[#2D543A] px-4 py-2 rounded text-xs font-mono font-bold transition-all">
+        <i class="fa-solid fa-rotate-right mr-1"></i> Retake Test
+      </a>
+      <a href="/download-paper-pdf/{{ paper.id }}" class="btn-military-gold px-4 py-2 rounded text-xs font-bold font-mono">
+        <i class="fa-solid fa-file-pdf mr-1"></i> Download Solution PDF
+      </a>
+    </div>
+  </div>
+
+  <!-- Score Summary Metric Cards -->
+  <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4 mb-8">
+    
+    <div class="bg-[#0C1610] border border-[#203627] p-4 rounded-xl text-center">
+      <p class="text-[11px] font-mono text-gray-400 uppercase">Total Marks</p>
+      <p class="text-2xl font-bold font-mono text-amber-400 mt-1">{{ attempt.score }} / {{ attempt.max_marks }}</p>
+    </div>
+
+    <div class="bg-[#0C1610] border border-[#203627] p-4 rounded-xl text-center">
+      <p class="text-[11px] font-mono text-gray-400 uppercase">Accuracy</p>
+      <p class="text-2xl font-bold font-mono text-emerald-400 mt-1">{{ attempt.accuracy_percent }}%</p>
+    </div>
+
+    <div class="bg-[#0C1610] border border-[#203627] p-4 rounded-xl text-center">
+      <p class="text-[11px] font-mono text-gray-400 uppercase">Correct</p>
+      <p class="text-2xl font-bold font-mono text-emerald-400 mt-1">{{ attempt.correct_count }} Qs</p>
+    </div>
+
+    <div class="bg-[#0C1610] border border-[#203627] p-4 rounded-xl text-center">
+      <p class="text-[11px] font-mono text-gray-400 uppercase">Incorrect</p>
+      <p class="text-2xl font-bold font-mono text-rose-400 mt-1">{{ attempt.incorrect_count }} Qs</p>
+    </div>
+
+    <div class="bg-[#0C1610] border border-[#203627] p-4 rounded-xl text-center">
+      <p class="text-[11px] font-mono text-gray-400 uppercase">Unattempted</p>
+      <p class="text-2xl font-bold font-mono text-gray-400 mt-1">{{ attempt.unattempted_count }} Qs</p>
+    </div>
+
+    <div class="bg-[#0C1610] border border-[#203627] p-4 rounded-xl text-center">
+      <p class="text-[11px] font-mono text-gray-400 uppercase">Time Spent</p>
+      <p class="text-2xl font-bold font-mono text-blue-400 mt-1">{{ (attempt.time_taken_seconds // 60) }}m {{ (attempt.time_taken_seconds % 60) }}s</p>
+    </div>
+
+  </div>
+
+  <!-- Topic-wise Breakdown Table -->
+  <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-6 mb-10 shadow-xl">
+    <h3 class="text-sm font-bold font-mono uppercase tracking-wider text-amber-400 mb-4 pb-2 border-b border-[#1C3224] flex items-center justify-between">
+      <span>Topic-Level Accuracy & Status Diagnosis</span>
+      <span class="text-xs text-gray-400 font-sans">Recorded in Student Dossier</span>
+    </h3>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-left text-xs font-mono">
+        <thead class="bg-[#112016] text-gray-300 border-b border-[#1F3627]">
+          <tr>
+            <th class="p-3">Subject</th>
+            <th class="p-3">Topic / Chapter</th>
+            <th class="p-3">Questions Attempted</th>
+            <th class="p-3">Correct</th>
+            <th class="p-3">Accuracy</th>
+            <th class="p-3">Performance Verdict</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-[#1A2E20]">
+          {% for topic, stat in topic_stats.items() %}
+            <tr class="hover:bg-[#122218] transition-colors">
+              <td class="p-3 text-gray-300">{{ stat.subject }}</td>
+              <td class="p-3 text-white font-bold">{{ topic }}</td>
+              <td class="p-3 text-gray-300">{{ stat.total }}</td>
+              <td class="p-3 text-emerald-400">{{ stat.correct }}</td>
+              <td class="p-3 font-bold {% if stat.accuracy >= 70 %}text-emerald-400{% elif stat.accuracy >= 50 %}text-amber-400{% else %}text-rose-400{% endif %}">
+                {{ stat.accuracy }}%
+              </td>
+              <td class="p-3">
+                <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase
+                  {% if stat.status == 'Strong Performance' %}bg-emerald-950 text-emerald-300 border border-emerald-600
+                  {% elif stat.status == 'Practice Recommended' %}bg-amber-950 text-amber-300 border border-amber-600
+                  {% else %}bg-red-950 text-rose-300 border border-rose-600{% endif %}">
+                  {{ stat.status }}
+                </span>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Detailed Question-by-Question Solutions Review -->
+  <div class="space-y-6">
+    <div class="pb-2 border-b border-[#1E3325]">
+      <h3 class="text-xl font-bold font-['Chakra_Petch'] text-white">
+        Comprehensive Question Solutions & Review
+      </h3>
+      <p class="text-xs text-gray-400 font-mono mt-0.5">Inspect your chosen options versus correct answers with verified step-by-step solutions</p>
+    </div>
+
+    {% for item in review_items %}
+      <div class="bg-[#0C1610] border border-[#22392A] rounded-xl p-6 shadow-xl">
+        
+        <div class="flex items-center justify-between mb-3 border-b border-[#1A2C20] pb-2">
+          <div class="flex items-center space-x-2">
+            <span class="text-xs font-mono font-bold text-amber-400">
+              Q{{ loop.index }}. [{{ item.question.subject }} &raquo; {{ item.question.topic }}]
+            </span>
+          </div>
+          
+          <!-- Candidate Status Pill -->
+          <div>
+            {% if item.is_correct %}
+              <span class="px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-600 text-xs font-mono font-bold flex items-center gap-1">
+                <i class="fa-solid fa-check"></i> CORRECT (+{{ paper.marks_per_correct }} Marks)
+              </span>
+            {% elif item.user_selected %}
+              <span class="px-2 py-0.5 rounded bg-rose-950 text-rose-300 border border-rose-600 text-xs font-mono font-bold flex items-center gap-1">
+                <i class="fa-solid fa-xmark"></i> INCORRECT (-{{ paper.negative_marks }} Neg)
+              </span>
+            {% else %}
+              <span class="px-2 py-0.5 rounded bg-gray-800 text-gray-400 border border-gray-600 text-xs font-mono font-bold">
+                UNATTEMPTED (0 Marks)
+              </span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Question Text -->
+        <p class="text-sm font-medium text-white mb-4 leading-relaxed">
+          {{ item.question.question_text_en }}
+        </p>
+
+        <!-- Options Review Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-5 text-xs">
+          
+          <!-- Option A -->
+          <div class="p-3 rounded-lg border 
+            {% if item.question.correct_option == 'A' %}bg-emerald-950/70 border-emerald-500 text-white font-bold
+            {% elif item.user_selected == 'A' %}bg-rose-950/70 border-rose-500 text-white font-bold
+            {% else %}bg-[#101C14] border-[#1F3325] text-gray-300{% endif %}">
+            <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-gray-800 text-amber-400 font-bold mr-2">A</span>
+            {{ item.question.option_a_en }}
+            {% if item.question.correct_option == 'A' %}<span class="text-emerald-400 ml-2 font-mono">(Correct Answer)</span>{% endif %}
+            {% if item.user_selected == 'A' and item.question.correct_option != 'A' %}<span class="text-rose-400 ml-2 font-mono">(Your Choice - Wrong)</span>{% endif %}
+          </div>
+
+          <!-- Option B -->
+          <div class="p-3 rounded-lg border 
+            {% if item.question.correct_option == 'B' %}bg-emerald-950/70 border-emerald-500 text-white font-bold
+            {% elif item.user_selected == 'B' %}bg-rose-950/70 border-rose-500 text-white font-bold
+            {% else %}bg-[#101C14] border-[#1F3325] text-gray-300{% endif %}">
+            <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-gray-800 text-amber-400 font-bold mr-2">B</span>
+            {{ item.question.option_b_en }}
+            {% if item.question.correct_option == 'B' %}<span class="text-emerald-400 ml-2 font-mono">(Correct Answer)</span>{% endif %}
+            {% if item.user_selected == 'B' and item.question.correct_option != 'B' %}<span class="text-rose-400 ml-2 font-mono">(Your Choice - Wrong)</span>{% endif %}
+          </div>
+
+          <!-- Option C -->
+          <div class="p-3 rounded-lg border 
+            {% if item.question.correct_option == 'C' %}bg-emerald-950/70 border-emerald-500 text-white font-bold
+            {% elif item.user_selected == 'C' %}bg-rose-950/70 border-rose-500 text-white font-bold
+            {% else %}bg-[#101C14] border-[#1F3325] text-gray-300{% endif %}">
+            <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-gray-800 text-amber-400 font-bold mr-2">C</span>
+            {{ item.question.option_c_en }}
+            {% if item.question.correct_option == 'C' %}<span class="text-emerald-400 ml-2 font-mono">(Correct Answer)</span>{% endif %}
+            {% if item.user_selected == 'C' and item.question.correct_option != 'C' %}<span class="text-rose-400 ml-2 font-mono">(Your Choice - Wrong)</span>{% endif %}
+          </div>
+
+          <!-- Option D -->
+          <div class="p-3 rounded-lg border 
+            {% if item.question.correct_option == 'D' %}bg-emerald-950/70 border-emerald-500 text-white font-bold
+            {% elif item.user_selected == 'D' %}bg-rose-950/70 border-rose-500 text-white font-bold
+            {% else %}bg-[#101C14] border-[#1F3325] text-gray-300{% endif %}">
+            <span class="w-6 h-6 inline-flex items-center justify-center rounded-full bg-gray-800 text-amber-400 font-bold mr-2">D</span>
+            {{ item.question.option_d_en }}
+            {% if item.question.correct_option == 'D' %}<span class="text-emerald-400 ml-2 font-mono">(Correct Answer)</span>{% endif %}
+            {% if item.user_selected == 'D' and item.question.correct_option != 'D' %}<span class="text-rose-400 ml-2 font-mono">(Your Choice - Wrong)</span>{% endif %}
+          </div>
+
+        </div>
+
+        <!-- Verified Step-by-Step Solution -->
+        <div class="bg-[#09120D] border-l-4 border-l-amber-400 p-4 rounded-r-lg text-xs leading-relaxed font-mono">
+          <p class="text-amber-400 font-bold mb-1">
+            <i class="fa-solid fa-lightbulb"></i> Step-by-Step Mathematical & Factual Solution:
+          </p>
+          <div class="text-gray-300 whitespace-pre-line text-[11.5px] leading-relaxed">
+{{ item.question.explanation_en }}
+          </div>
+        </div>
+
+      </div>
+    {% endfor %}
+  </div>
+
+</section>
+{% endblock %}

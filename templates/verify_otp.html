@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Verify Security OTP &bull; DEFENCE PATH{% endblock %}
+
+{% block content %}
+<section class="py-16 px-4 sm:px-6 lg:px-8 max-w-lg mx-auto">
+  
+  <div class="text-center mb-8">
+    <div class="w-14 h-14 rounded-2xl bg-amber-400 mx-auto flex items-center justify-center text-black font-extrabold text-2xl mb-3 shadow-xl shadow-amber-950/40 border-2 border-amber-300">
+      <i class="fa-solid fa-shield-halved"></i>
+    </div>
+    <span class="text-xs font-mono text-amber-400 uppercase tracking-widest bg-amber-950/80 px-3 py-1 rounded-full border border-amber-600/50">
+      STEP 2 OF 3 &bull; SECURITY VERIFICATION
+    </span>
+    <h1 class="text-2xl sm:text-3xl font-extrabold font-['Chakra_Petch'] text-white mt-3">
+      Enter Verification Code
+    </h1>
+    <p class="text-xs text-gray-400 font-mono mt-1">
+      Verification code dispatched to: <span class="text-amber-300 font-bold">{{ target_email }}</span>
+    </p>
+  </div>
+
+  <div class="bg-[#0C1610] border-2 border-[#233C2B] rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+    <div class="flex items-center justify-between text-xs font-mono text-amber-400 pb-3 mb-5 border-b border-[#1F3627]">
+      <span class="flex items-center gap-1.5"><i class="fa-solid fa-clock"></i> 5-MINUTE EXPIRY</span>
+      <span class="text-rose-400"><i class="fa-solid fa-lock"></i> MAX 3 ATTEMPTS</span>
+    </div>
+
+    <form method="POST" action="{{ verify_action }}" class="space-y-5 text-xs font-mono">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+      <div>
+        <label class="block text-gray-300 mb-2 font-bold text-center">
+          Enter 6-Digit One-Time Security Code <span class="text-rose-400">*</span>
+        </label>
+        <div class="relative max-w-xs mx-auto">
+          <input type="text" name="otp" required maxlength="6" pattern="[0-9]{6}" autofocus
+                 placeholder="0 0 0 0 0 0" autocomplete="one-time-code" inputmode="numeric"
+                 class="w-full bg-[#122218] border-2 border-amber-500/70 rounded-xl py-3 text-center text-white text-2xl font-bold tracking-[0.5em] placeholder-gray-600 focus:outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/40 transition-all font-mono">
+        </div>
+        <p class="text-[11px] text-gray-400 text-center mt-2">
+          Check your email inbox and spam folder for the 6-digit passcode.
+        </p>
+      </div>
+
+      <div class="pt-2">
+        <button type="submit" class="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white py-3 rounded-lg font-bold font-mono tracking-wider shadow-xl transition-all flex items-center justify-center gap-2 text-sm">
+          <i class="fa-solid fa-check-double"></i> Verify Code & Proceed
+        </button>
+      </div>
+
+      <div class="pt-4 border-t border-[#1C3224] flex items-center justify-between text-xs">
+        <a href="{{ resend_action }}" class="text-amber-400 hover:text-amber-300 transition-colors">
+          <i class="fa-solid fa-rotate-right"></i> Request New Code
+        </a>
+        <a href="{{ login_url }}" class="text-gray-400 hover:text-white transition-colors">
+          Cancel &bull; Return to Login
+        </a>
+      </div>
+    </form>
+  </div>
+
+  <div class="text-center mt-6 text-xs text-gray-500 font-mono">
+    Cryptographically verified against server-side salted SHA-256 hash. Single-use only.
+  </div>
+
+</section>
+{% endblock %}
